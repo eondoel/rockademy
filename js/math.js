@@ -43,7 +43,7 @@ function genEnteros() {
     const ans = t - drop;
     return {
       text: `En la Isla Nublar la temperatura era de ${t} °C. En la noche bajó ${drop} °C. ¿Cuál es la temperatura ahora?`,
-      emoji: '🦖🌡️', answer: String(ans), options: numOptions(ans, 5),
+      emoji: '🦖🌡️', img: 'trex', answer: String(ans), options: numOptions(ans, 5),
       note: 'Bajar de temperatura = restar',
     };
   }
@@ -51,7 +51,7 @@ function genEnteros() {
   const ans = -nivel + sube;
   return {
     text: `Steve está en el nivel −${nivel} de la mina y sube ${sube} niveles con su escalera. ¿En qué nivel queda?`,
-    emoji: '⛏️', answer: String(ans), options: numOptions(ans, 5),
+    emoji: '⛏️', img: 'steve', answer: String(ans), options: numOptions(ans, 5),
     note: 'Subir = sumar',
   };
 }
@@ -96,7 +96,7 @@ function genFracciones() {
   const ans = fracStr(d - eaten, d);
   return {
     text: `Reese se comió ${fracStr(eaten, d)} de la pizza. ¿Qué fracción queda para Malcolm?`,
-    emoji: '🍕', answer: ans,
+    emoji: '🍕', img: 'malcolm', answer: ans,
     options: optSet(ans, [fracStr(eaten, d), fracStr(d - eaten + 1 > d ? 1 : d - eaten + 1, d), '1/2', fracStr(1, d), fracStr(d - 1, d)]),
     note: 'El total de la pizza es ' + fracStr(d, d),
   };
@@ -111,7 +111,7 @@ function genDecimales() {
     const ans = (a + b) / 100;
     return {
       text: `Una skin cuesta ${a / 100} monedas y un baile ${b / 100}. ¿Cuánto gastas en total?`,
-      emoji: '🕺💰', answer: String(ans),
+      emoji: '🕺💰', img: 'vbucks', answer: String(ans),
       options: shuffle([String(ans), String((a + b + 100) / 100), String((a + b - 50) / 100), String((a + b) / 10)]),
       note: 'Alinea los puntos decimales para sumar',
     };
@@ -130,7 +130,7 @@ function genDecimales() {
   const ans = (pay * 100 - cost) / 100;
   return {
     text: `Compras un elixir de ${cost / 100} monedas y pagas con un billete de ${pay}. ¿Cuánto te dan de cambio?`,
-    emoji: '🧪', answer: String(ans),
+    emoji: '🧪', img: 'llama', answer: String(ans),
     options: shuffle([String(ans), String(ans + 1), String(Math.max(0.5, ans - 1)), String((pay * 100 - cost + 50) / 100)]),
     note: 'Cambio = lo que pagas − lo que cuesta',
   };
@@ -154,7 +154,7 @@ function genPorcentajes() {
     const ans = base - base * p / 100;
     return {
       text: `Una skin legendaria cuesta ${base} V-monedas y tiene ${p}% de descuento. ¿Cuánto pagas?`,
-      emoji: '🛒', answer: String(ans), options: numOptions(ans, Math.round(base / 8)),
+      emoji: '🛒', img: 'vbucks', answer: String(ans), options: numOptions(ans, Math.round(base / 8)),
       note: 'Calcula el descuento y réstalo al precio',
     };
   }
@@ -162,7 +162,7 @@ function genPorcentajes() {
   const ans = parte * 100 / total;
   return {
     text: `Goku lanzó ${total} ráfagas de ki y ${parte} dieron en el blanco. ¿Qué porcentaje acertó?`,
-    emoji: '💥', answer: ans + '%',
+    emoji: '💥', img: 'goku', answer: ans + '%',
     options: optSet(ans + '%', [
       (ans + 10 > 100 ? ans - 20 : ans + 10) + '%',
       Math.max(5, ans - 10) + '%',
@@ -205,7 +205,7 @@ function genEcuaciones() {
   const tarde = ri(10, 30), total = x * 10 + tarde;
   return {
     text: `Goku hizo 10 series de x lagartijas en la mañana y ${tarde} en la tarde. En total hizo ${total}. ¿Cuánto vale x?`,
-    emoji: '💪', answer: String(x), options: numOptions(x, 4),
+    emoji: '💪', img: 'goku', answer: String(x), options: numOptions(x, 4),
     note: `La ecuación es: 10x + ${tarde} = ${total}`,
   };
 }
@@ -218,7 +218,7 @@ function genGeometria() {
     const ans = a * b;
     return {
       text: `Construyes un muro en Minecraft de ${a} bloques de largo y ${b} de alto. ¿Cuántos bloques necesitas?`,
-      emoji: '🧱', answer: String(ans), options: numOptions(ans, 8),
+      emoji: '🧱', img: 'grass', answer: String(ans), options: numOptions(ans, 8),
       note: 'Área del rectángulo = largo × alto',
     };
   }
@@ -245,7 +245,7 @@ function genGeometria() {
   const ans = l * w * h;
   return {
     text: `Un cofre gigante mide ${l} × ${w} × ${h} bloques. ¿Cuántos bloques caben dentro (volumen)?`,
-    emoji: '📦', answer: String(ans), options: numOptions(ans, 8),
+    emoji: '📦', img: 'diamond', answer: String(ans), options: numOptions(ans, 8),
     note: 'Volumen = largo × ancho × alto',
   };
 }
@@ -311,6 +311,7 @@ function showMathHome() {
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">🐉 Torre de Entrenamiento Z: Matemáticas</h1>
     <p class="screen-sub">Domina cada tema (8 de 10 aciertos) para ganar una esfera del dragón. ¡Junta las 7 e invoca a Shenlong!</p>
+    ${imgTag(allDone ? 'shenron' : 'esfera', 'scene-banner', 'Esferas del dragón')}
     <div class="collection">
       <span class="c-label">🔮 ESFERAS DEL DRAGÓN (${p.done}/7)</span>
       ${MATH_TOPICS.map((t, i) => {
@@ -320,6 +321,7 @@ function showMathHome() {
       ${allDone ? '<span class="c-item">🐉✨</span>' : ''}
     </div>
     ${allDone ? `<div class="reward-banner"><span class="r-emoji">🐉</span>¡SHENLONG HA SIDO INVOCADO! Dominaste las matemáticas de tu grado. Sigue entrenando para mantener tu poder.</div>` : ''}
+    <p class="muted" style="font-size:.85rem;margin-top:8px">📏 Reglas: cada misión tiene 10 problemas. Necesitas <b>8 aciertos</b> para ganar la esfera 🟠. Si fallas, la app te explica cómo se resolvía. Puedes reintentar las veces que quieras.</p>
     <div class="spacer"></div>
     ${MATH_TOPICS.map((t, idx) => {
       const st = S.math[t.id] || {};
@@ -369,9 +371,9 @@ function startMathQuiz(idx) {
           const p = mathProgress();
           slot.innerHTML = `
             <div class="reward-banner">
-              <span class="r-emoji">🟠</span>
+              ${imgTag(p.done === 7 ? 'shenron' : 'esfera', 'r-img', 'Esfera del dragón')}
               ¡Ganaste la esfera de ${esc(t.title)}! Llevas ${p.done} de 7.
-              ${p.done === 7 ? '<br>🐉 ¡¡JUNTASTE LAS 7!! Ve a la Torre a invocar a Shenlong.' : ''}
+              ${p.done === 7 ? '<br>🐉 ¡¡JUNTASTE LAS 7!! SHENLONG TE ESPERA EN LA TORRE.' : ''}
             </div>`;
         }
       }

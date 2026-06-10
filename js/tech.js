@@ -4,46 +4,84 @@
    2) Academia Claude: aprender a usar la IA con buenos prompts */
 
 /* ---------- Robo-Steve ---------- */
-/* grid: '.' pasto, '#' lava, 'S' inicio, 'D' diamante. dir: N/E/S/W */
+/* grid: '.' pasto, '#' TNT (peligro), 'S' inicio, 'D' diamante. dir: N/E/S/W
+   Progresión: avanzar → contar → girar → combinar → patrones → funciones → bucles */
 const ROBOT_LEVELS = [
   {
     name: 'Primeros pasos', dir: 'E', maxMain: 5, maxF1: 0,
-    intro: '🧠 Un PROGRAMA es una lista de órdenes que la compu sigue EN ORDEN, una por una. Lleva a Robo-Steve al diamante 💎.',
+    intro: '🧠 IDEA #1: Un PROGRAMA es una lista de órdenes que la computadora sigue EN ORDEN, una por una. Steve solo hace lo que tú le ordenes. Llévalo al diamante 💎.',
+    hint1: 'Cuenta los cuadros de pasto entre Steve y el diamante. Cada ⬆️ lo mueve UN cuadro.',
+    hint2: 'La solución es: ⬆️ ⬆️ ⬆️ (tres avances).',
     grid: ['S..D'],
   },
   {
-    name: 'La primera curva', dir: 'E', maxMain: 6, maxF1: 0,
-    intro: '🤖 Los robots no adivinan: tú decides exactamente CUÁNDO girar. ↻ gira a su derecha, ↺ a su izquierda.',
+    name: 'Cuenta tus pasos', dir: 'E', maxMain: 7, maxF1: 0,
+    intro: '🧮 IDEA #2: Los programadores CUENTAN antes de escribir. Ni un paso de más, ni uno de menos. ¿Cuántos cuadros hay hasta el diamante?',
+    hint1: 'Señala con el dedo cada cuadro del camino y cuéntalos en voz alta.',
+    hint2: 'Son 5 cuadros: ⬆️ ⬆️ ⬆️ ⬆️ ⬆️.',
+    grid: ['S....D'],
+  },
+  {
+    name: 'Aprende a girar', dir: 'E', maxMain: 5, maxF1: 0,
+    intro: '🔄 IDEA #3: Girar NO es avanzar. ↻ y ↺ solo cambian hacia dónde MIRA Steve (fíjate en la flechita sobre su cabeza), sin moverlo de su cuadro. Steve mira ➡️… ¡pero el diamante está abajo!',
+    hint1: 'Si Steve avanza ⬆️ de inmediato, se sale del mapa y ¡BOOM! 💥 Primero gíralo para que mire hacia abajo ⬇️.',
+    hint2: 'La solución es: ↻ (ahora mira abajo) ⬆️ ⬆️.',
+    grid: ['S', '.', 'D'],
+  },
+  {
+    name: 'Gira al otro lado', dir: 'E', maxMain: 5, maxF1: 0,
+    intro: '🔄 IDEA #4: ↺ gira a la izquierda de STEVE (no la tuya). Ahora el diamante está ARRIBA. ¿Hacia dónde tiene que girar?',
+    hint1: 'Steve mira ➡️. Para mirar hacia arriba ⬆️, gira una vez a su izquierda ↺.',
+    hint2: 'La solución es: ↺ ⬆️ ⬆️.',
+    grid: ['D', '.', 'S'],
+  },
+  {
+    name: 'La primera curva', dir: 'E', maxMain: 7, maxF1: 0,
+    intro: '🛤️ IDEA #5: Combina avanzar y girar. Sigue el camino de pasto con el dedo ANTES de programar: ¿cuántos pasos, dónde giras, cuántos pasos más? ¡No pises el TNT! 🧨',
+    hint1: 'El camino es: 2 cuadros a la derecha, luego baja 2 cuadros.',
+    hint2: 'La solución es: ⬆️ ⬆️ ↻ ⬆️ ⬆️.',
     grid: ['S..', '##.', '..D'],
   },
   {
     name: 'Zigzag jurásico', dir: 'E', maxMain: 12, maxF1: 0,
-    intro: '🔍 Antes de programar, MIRA todo el camino. Los programadores planean primero y escriben después.',
+    intro: '🔍 IDEA #6: Los caminos largos esconden PATRONES. Mira bien: este camino baja como escalera, repitiendo los mismos movimientos. Descubrir patrones es pensar como programador.',
+    hint1: 'El patrón que se repite es: avanza, gira derecha, avanza, gira izquierda → ⬆️ ↻ ⬆️ ↺.',
+    hint2: 'La solución es: ⬆️ ↻ ⬆️ ↺, otra vez ⬆️ ↻ ⬆️ ↺, y termina con ⬆️ ↻ ⬆️.',
     grid: ['S.##', '#..#', '##..', '###D'],
   },
   {
     name: 'La gran vuelta en U', dir: 'E', maxMain: 14, maxF1: 0,
-    intro: '🧮 Cuenta los pasos con cuidado. Un paso de más… ¡y a la lava! 🌋',
+    intro: '🧮 IDEA #7: Último reto de secuencias: un camino largo con DOS giros para el mismo lado. Planea todo antes de tocar ▶️.',
+    hint1: 'Es una U: avanza hasta la esquina, gira a la derecha, baja, vuelve a girar a la derecha y regresa.',
+    hint2: 'La solución es: ⬆️×5, ↻, ⬆️×2, ↻, ⬆️×5.',
     grid: ['S.....', '#####.', 'D.....'],
   },
   {
     name: 'El poder de F1', dir: 'E', maxMain: 6, maxF1: 4,
-    intro: '✨ ¡Nuevo poder! F1 es una FUNCIÓN: guarda un mini-programa adentro y úsalo las veces que quieras. Mismo mapa del zigzag… pero ahora solo tienes 6 espacios. Pista: el patrón ⬆️↻⬆️↺ se repite.',
+    intro: '✨ IDEA #8: ¡Nuevo poder desbloqueado! F1 es una FUNCIÓN: una cajita donde guardas un mini-programa. Cada vez que pones ✨F1 en tu programa, Steve hace TODO lo que está en la cajita. Es el mismo zigzag de antes… pero ahora solo tienes 6 espacios. Toca el recuadro morado para escribir dentro de F1.',
+    hint1: '¿Recuerdas el patrón del zigzag? ⬆️ ↻ ⬆️ ↺. Guárdalo DENTRO de F1 y úsalo varias veces.',
+    hint2: 'F1 = ⬆️ ↻ ⬆️ ↺. Programa principal: ✨F1 ✨F1 ⬆️ ↻ ⬆️.',
     grid: ['S.##', '#..#', '##..', '###D'],
   },
   {
     name: 'El bucle infinito', dir: 'E', maxMain: 2, maxF1: 5,
-    intro: '🔁 Truco de pros: si F1 se llama A SÍ MISMA al final, se repite una y otra vez. ¡Eso es un BUCLE! Solo tienes 2 espacios en el programa principal…',
+    intro: '🔁 IDEA #9: Truco de pros: si pones ✨F1 AL FINAL de la propia F1, la función se repite una y otra vez. ¡Eso es un BUCLE! Steve repetirá el patrón hasta llegar al diamante. Solo tienes 2 espacios en el programa principal…',
+    hint1: 'Mete el patrón de escalera en F1 y haz que F1 se llame a sí misma al final.',
+    hint2: 'F1 = ⬆️ ↻ ⬆️ ↺ ✨F1. Programa principal: solo ✨F1.',
     grid: ['S.####', '#..###', '##..##', '###..#', '####..', '#####D'],
   },
   {
     name: 'La vuelta al mundo', dir: 'E', maxMain: 1, maxF1: 5,
-    intro: '🌍 UN solo espacio en el programa principal. Todo el trabajo lo hará tu bucle. ¿Ves el patrón del camino?',
+    intro: '🌍 IDEA #10: UN solo espacio en el programa principal. Todo el trabajo lo hará tu bucle. Mira el camino: ¿qué patrón se repite en cada lado del cuadrado?',
+    hint1: 'Cada lado del camino son 3 avances y un giro a la derecha. Y para repetirlo… F1 se llama a sí misma.',
+    hint2: 'F1 = ⬆️ ⬆️ ⬆️ ↻ ✨F1. Programa principal: ✨F1.',
     grid: ['S...', '###.', '###.', 'D...'],
   },
   {
     name: 'NIVEL JEFE 👑', dir: 'E', maxMain: 8, maxF1: 4,
-    intro: '👑 El reto final combina todo: patrón repetido + recta final. ¡Demuestra que ya piensas como programador!',
+    intro: '👑 RETO FINAL: combina TODO lo que aprendiste: un patrón repetido (función) + una recta final (secuencia). ¡Demuestra que ya piensas como programador!',
+    hint1: 'Primera parte: el zigzag de siempre (úsalo con F1 dos veces). Segunda parte: avanza, gira a la derecha y baja derecho.',
+    hint2: 'F1 = ⬆️ ↻ ⬆️ ↺. Programa: ✨F1 ✨F1 ⬆️ ↻ ⬆️ ⬆️ ⬆️.',
     grid: ['S.##', '#..#', '##..', '###.', '###.', '###D'],
   },
 ];
@@ -88,16 +126,19 @@ function showRobotLevels() {
   app.innerHTML = `
     <button class="back-link" id="back">← Mundo Tecnología</button>
     <h1 class="screen-title">🤖 Robo-Steve</h1>
-    <p class="screen-sub">Cada nivel te enseña una idea real de programación. Gana diamantes 💎 completándolos en orden.</p>
+    <p class="screen-sub">Cada nivel te enseña una idea real de programación, de lo más fácil a lo más pro. Gana diamantes 💎 completándolos en orden.</p>
     ${ROBOT_LEVELS.map((lv, i) => {
       const done = !!S.robot[i];
       const locked = i > 0 && !S.robot[i - 1];
+      const tag = i < 2 ? '🟢 Fácil: avanzar' : i < 5 ? '🟢 Fácil: girar y avanzar'
+        : i < 7 ? '🟡 Medio: caminos largos' : i < 8 ? '🟣 Nuevo: funciones'
+        : i < 10 ? '🔴 Pro: bucles' : '👑 Reto final';
       return `
         <button class="item-card" data-lv="${i}" ${locked ? 'disabled' : ''}>
           <span class="item-emoji">${locked ? '🔒' : (done ? '💎' : '🤖')}</span>
           <span class="item-body">
             <span class="item-title">Nivel ${i + 1}: ${esc(lv.name)}</span>
-            <span class="item-sub">${lv.maxF1 ? 'Con función ✨F1' : 'Secuencia de órdenes'}</span>
+            <span class="item-sub">${tag}</span>
           </span>
           <span class="item-status">${done ? '✅' : (locked ? '' : '▶️')}</span>
         </button>`;
@@ -119,6 +160,7 @@ function showRobotLevel(idx) {
   let mainProg = [], f1Prog = [];
   let activeList = 'main';
   let running = false;
+  let hintShown = 0; // 0 = sin pista, 1 = pista general, 2 = casi-solución
 
   const app = $('#app');
 
@@ -130,18 +172,18 @@ function showRobotLevel(idx) {
   function isGoal(r, c) { return lv.grid[r] && lv.grid[r][c] === 'D'; }
 
   function gridHTML() {
-    let html = `<div class="robot-grid" style="grid-template-columns:repeat(${cols},auto)">`;
+    let html = `<div class="robot-grid" style="--cols:${cols};grid-template-columns:repeat(${cols},auto)">`;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const ch = lv.grid[r][c];
         const open = ch !== '#';
         let inner = '';
-        if (ch === 'D') inner = '💎';
+        if (ch === 'D') inner = `<img class="goalimg" src="${IMG.diamond}" alt="diamante">`;
         if (bot.r === r && bot.c === c) {
-          inner = `<span class="bot">${bot.dead ? '💥' : '🤖'}</span>` +
-                  (bot.dead ? '' : `<span class="dirarrow">${DIR_ARROW[bot.dir]}</span>`);
+          inner += `<span class="bot">${bot.dead ? '💥' : `<img src="${IMG.steve}" alt="Steve">`}</span>` +
+                   (bot.dead ? '' : `<span class="dirarrow">${DIR_ARROW[bot.dir]}</span>`);
         }
-        html += `<div class="rcell ${open ? 'open' : 'lava'}">${open ? inner : '🌋'}</div>`;
+        html += `<div class="rcell ${open ? 'open' : 'lava'}">${open ? inner : `<img class="cellimg" src="${IMG.tnt}" alt="TNT">`}</div>`;
       }
     }
     return html + '</div>';
@@ -161,8 +203,21 @@ function showRobotLevel(idx) {
       <button class="back-link" id="back">← Niveles</button>
       <h1 class="screen-title">🤖 Nivel ${idx + 1}: ${esc(lv.name)}</h1>
       <div class="level-intro">${lv.intro}</div>
+      <details class="rules-box" ${idx === 0 ? 'open' : ''}>
+        <summary>📜 Reglas del juego (toca aquí)</summary>
+        <ul>
+          <li>🤖 Steve empieza mirando hacia donde apunta la flechita sobre su cabeza.</li>
+          <li>⬆️ <b>Avanza</b>: camina UN cuadro hacia donde está mirando.</li>
+          <li>↻ / ↺ <b>Girar</b>: solo lo voltean en su lugar, ¡NO lo mueven de cuadro!</li>
+          <li>🧨 Si pisa el TNT o se sale del pasto… ¡BOOM! 💥 (no pasa nada, reintentas).</li>
+          <li>📜 Las órdenes se ejecutan EN ORDEN, de la primera a la última.</li>
+          <li>🗑️ ¿Te equivocaste? Toca una orden de tu programa para borrarla.</li>
+        </ul>
+      </details>
       <div class="robot-wrap">
         ${gridHTML()}
+        ${hintShown >= 1 ? `<div class="hint-box">💡 ${lv.hint1}</div>` : ''}
+        ${hintShown >= 2 ? `<div class="hint-box">🆘 ${lv.hint2}</div>` : ''}
         <div class="robot-msg ${msgClass || ''}" id="r-msg">${msg || ''}</div>
         <div class="prog-section ${activeList === 'main' ? 'active' : ''}" id="sec-main">
           <h3><span>📜 PROGRAMA PRINCIPAL</span><span>${mainProg.length}/${lv.maxMain}</span></h3>
@@ -175,13 +230,14 @@ function showRobotLevel(idx) {
         </div>
         <p class="muted center" style="font-size:.8rem">Toca un recuadro (programa o F1) para elegir dónde agregar órdenes.</p>` : ''}
         <div class="palette">
-          <button data-cmd="F" ${running ? 'disabled' : ''}>⬆️ Avanza</button>
-          <button data-cmd="L" ${running ? 'disabled' : ''}>↺ Izquierda</button>
-          <button data-cmd="R" ${running ? 'disabled' : ''}>↻ Derecha</button>
-          ${lv.maxF1 ? `<button data-cmd="F1" class="f1" ${running ? 'disabled' : ''}>✨ F1</button>` : ''}
+          <button data-cmd="F" ${running ? 'disabled' : ''}>⬆️ Avanza 1</button>
+          <button data-cmd="L" ${running ? 'disabled' : ''}>↺ Gira izq.</button>
+          <button data-cmd="R" ${running ? 'disabled' : ''}>↻ Gira der.</button>
+          ${lv.maxF1 ? `<button data-cmd="F1" class="f1" ${running ? 'disabled' : ''}>✨ Usa F1</button>` : ''}
         </div>
         <div class="btn-row" style="justify-content:center">
           <button class="btn green" id="r-run" ${running ? 'disabled' : ''}>▶️ ¡EJECUTAR!</button>
+          <button class="btn secondary" id="r-hint" ${running || hintShown >= 2 ? 'disabled' : ''}>💡 ${hintShown === 0 ? 'Pista' : 'Otra pista'}</button>
           <button class="btn secondary" id="r-clear" ${running ? 'disabled' : ''}>🗑️ Limpiar</button>
         </div>
       </div>
@@ -216,6 +272,9 @@ function showRobotLevel(idx) {
       activeList = 'f1'; draw();
     });
     $('#r-run').addEventListener('click', run);
+    $('#r-hint').addEventListener('click', () => {
+      if (hintShown < 2) { hintShown++; sfxClick(); draw(); }
+    });
     $('#r-clear').addEventListener('click', () => { mainProg = []; f1Prog = []; resetBot(); draw(); });
   }
 
@@ -256,7 +315,7 @@ function showRobotLevel(idx) {
           bot.c = Math.max(0, Math.min(cols - 1, nc));
           bot.dead = true;
           sfxBad();
-          draw('💥 ¡Auch! Robo-Steve se salió del camino. Revisa tu programa e inténtalo otra vez.', 'bad');
+          draw('💥 ¡BOOM! Steve pisó el TNT (o se salió del pasto). Repasa tu programa paso por paso: ¿en qué orden se equivocó?', 'bad');
           beep(100, .4, 'sawtooth', .12);
           running = false;
           await sleep(900);
@@ -283,7 +342,8 @@ function showRobotLevel(idx) {
       const hasNext = idx + 1 < ROBOT_LEVELS.length;
       draw('💎 ¡DIAMANTE CONSEGUIDO!', 'ok');
       showModal(`
-        <h2>💎 ¡Nivel ${idx + 1} completado!</h2>
+        ${imgTag('diamond', 'r-img', 'diamante')}
+        <h2>¡Nivel ${idx + 1} completado!</h2>
         <p>${firstTime ? '+40 XP · Nuevo diamante en tu colección' : '+10 XP · Ya tenías este diamante'}</p>
         <div class="btn-row" style="justify-content:center">
           <button class="btn secondary" data-close id="m-stay">🔁 Repetir</button>

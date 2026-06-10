@@ -14,7 +14,8 @@ function showHome() {
     <h1 class="screen-title">${hello} 👊</h1>
     <p class="screen-sub">Elige tu mundo de entrenamiento de hoy. Cada misión te da XP y sube tu nivel de poder. ⚡</p>
 
-    <button class="world-card english" id="w-english">
+    <button class="world-card english has-hero" id="w-english">
+      ${imgTag('trex', 'hero-img', 'T-Rex')}
       <span class="big-emoji">🦖</span>
       <h2>Isla Jurásica — Inglés</h2>
       <p>Aprende inglés desde cero con audio. Colecciona dinos completando unidades.</p>
@@ -22,7 +23,8 @@ function showHome() {
       <div class="minibar" style="color:var(--green)"><div style="width:${(ep.done / ep.total) * 100}%"></div></div>
     </button>
 
-    <button class="world-card math" id="w-math">
+    <button class="world-card math has-hero" id="w-math">
+      ${imgTag('goku', 'hero-img', 'Goku')}
       <span class="big-emoji">🐉</span>
       <h2>Torre Z — Matemáticas</h2>
       <p>Entrena con problemas de 1° de secundaria. Junta las 7 esferas del dragón.</p>
@@ -30,7 +32,8 @@ function showHome() {
       <div class="minibar" style="color:var(--accent)"><div style="width:${(mp.done / mp.total) * 100}%"></div></div>
     </button>
 
-    <button class="world-card tech" id="w-tech">
+    <button class="world-card tech has-hero" id="w-tech">
+      ${imgTag('creeper', 'hero-img', 'Creeper')}
       <span class="big-emoji">💎</span>
       <h2>Mundo Tecnología</h2>
       <p>Programa a Robo-Steve y conviértete en Maestro de la IA con Claude.</p>

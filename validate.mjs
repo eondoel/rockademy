@@ -33,6 +33,9 @@ for (const u of ENGLISH_UNITS) {
 // Robot: simular soluciones conocidas
 const SOLS = [
   { m: ['F','F','F'] },
+  { m: ['F','F','F','F','F'] },
+  { m: ['R','F','F'] },
+  { m: ['L','F','F'] },
   { m: ['F','F','R','F','F'] },
   { m: ['F','R','F','L','F','R','F','L','F','R','F'] },
   { m: ['F','F','F','F','F','R','F','F','R','F','F','F','F','F'] },
@@ -41,6 +44,7 @@ const SOLS = [
   { m: ['F1'], f1: ['F','F','F','R','F1'] },
   { m: ['F1','F1','F','R','F','F','F'], f1: ['F','R','F','L'] },
 ];
+if (SOLS.length !== ROBOT_LEVELS.length) issues.push('robot: faltan soluciones de prueba (' + SOLS.length + ' vs ' + ROBOT_LEVELS.length + ' niveles)');
 ROBOT_LEVELS.forEach((lv, i) => {
   const sol = SOLS[i], f1 = sol.f1 || [];
   if (sol.m.length > lv.maxMain) issues.push('robot L' + (i+1) + ': solución no cabe en main (' + sol.m.length + '>' + lv.maxMain + ')');
@@ -69,7 +73,7 @@ ROBOT_LEVELS.forEach((lv, i) => {
   else if (!won) issues.push('robot L' + (i+1) + ': la solución no llega al diamante');
 });
 if (issues.length) { console.log(issues.slice(0, 20).join('\\n')); process.exit(1); }
-console.log('TODO OK: ' + MATH_TOPICS.length * 300 + ' preguntas de mate, ' + ENGLISH_UNITS.length * 50 + ' rondas de inglés, 8 niveles de robot resolubles');
+console.log('TODO OK: ' + MATH_TOPICS.length * 300 + ' preguntas de mate, ' + ENGLISH_UNITS.length * 50 + ' rondas de inglés, ' + ROBOT_LEVELS.length + ' niveles de robot resolubles');
 `;
 
 (0, eval)(src + test);

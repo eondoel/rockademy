@@ -47,6 +47,27 @@ function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+/* ---------- Imágenes de franquicias (proyecto personal, sin lucro) ---------- */
+const IMG = {
+  goku: 'assets/img/goku.webp',
+  shenron: 'assets/img/shenron.webp',
+  esfera: 'assets/img/esfera.webp',
+  trex: 'assets/img/trex.webp',
+  raptor: 'assets/img/raptor.webp',
+  creeper: 'assets/img/creeper.png',
+  steve: 'assets/img/steve.png',
+  diamond: 'assets/img/diamond.png',
+  grass: 'assets/img/grass.png',
+  tnt: 'assets/img/tnt.png',
+  llama: 'assets/img/llama.webp',
+  vbucks: 'assets/img/vbucks.webp',
+  malcolm: 'assets/img/malcolm.webp',
+};
+function imgTag(name, cls = '', alt = '') {
+  if (!IMG[name]) return '';
+  return `<img src="${IMG[name]}" class="${cls}" alt="${esc(alt)}" onerror="this.style.display='none'">`;
+}
+
 /* ---------- Rangos y XP ---------- */
 const RANKS = [
   { xp: 0,    t: 'Aldeano Curioso',        e: '🌱' },
@@ -260,7 +281,7 @@ function startQuiz(cfg) {
     app.innerHTML = `
       ${header()}
       <div class="q-card">
-        ${q.emoji ? `<div class="q-emoji">${q.emoji}</div>` : ''}
+        ${q.img ? imgTag(q.img, 'q-img') : (q.emoji ? `<div class="q-emoji">${q.emoji}</div>` : '')}
         <div class="q-text">${q.text}</div>
         ${q.say ? `<button class="q-say" id="q-say" title="Escuchar">🔊</button>` : ''}
         <div class="opts">

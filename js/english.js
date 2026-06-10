@@ -21,8 +21,8 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'numeros', title: 'Números', emoji: '🔢', dino: '🦖',
-    desc: 'One, two, three… ¡a contar!',
+    id: 'numeros', title: 'Números', emoji: '🔢', dino: '🦖', img: 'vbucks',
+    desc: 'One, two, three… ¡a contar V-monedas!',
     items: [
       { en: 'one', es: 'uno', e: '1️⃣' },
       { en: 'two', es: 'dos', e: '2️⃣' },
@@ -55,7 +55,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'criaturas', title: 'Criaturas', emoji: '🐾', dino: '🐢',
+    id: 'criaturas', title: 'Criaturas', emoji: '🐾', dino: '🐢', img: 'raptor',
     desc: 'Los mobs y bestias del multiverso',
     items: [
       { en: 'dinosaur', es: 'dinosaurio', e: '🦖' },
@@ -71,7 +71,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'familia', title: 'La familia', emoji: '👨‍👩‍👦', dino: '🦎',
+    id: 'familia', title: 'La familia', emoji: '👨‍👩‍👦', dino: '🦎', img: 'malcolm',
     desc: 'Como en Malcolm: toda la familia',
     items: [
       { en: 'family', es: 'familia', e: '👨‍👩‍👧‍👦' },
@@ -103,7 +103,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'acciones', title: 'Acciones gamer', emoji: '🎮', dino: '🦂',
+    id: 'acciones', title: 'Acciones gamer', emoji: '🎮', dino: '🦂', img: 'llama',
     desc: 'Run, jump, build, mine…',
     items: [
       { en: 'run', es: 'correr', e: '🏃' },
@@ -121,7 +121,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'frases', title: 'Frases de batalla', emoji: '⚡', dino: '🐉',
+    id: 'frases', title: 'Frases de batalla', emoji: '⚡', dino: '🐉', img: 'goku',
     desc: 'Frases completas para sonar pro',
     items: [
       { en: "let's go", es: 'vamos', e: '🚀' },
@@ -151,6 +151,8 @@ function showEnglishHome() {
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">🦖 Isla Jurásica: Inglés</h1>
     <p class="screen-sub">Aprende palabras, escúchalas y gana misiones. Cada unidad ganada hace nacer un dino para tu colección.</p>
+    ${imgTag('trex', 'scene-banner', 'T-Rex de Jurassic Park')}
+    <p class="muted" style="font-size:.85rem;margin-bottom:12px">📏 Reglas: en cada unidad primero <b>aprende</b> las palabras con sonido 🔊 y repítelas en voz alta. Luego juega la <b>misión</b>: 10 retos, con <b>8 aciertos</b> nace tu dino 🥚→🦖.</p>
     <div class="collection">
       <span class="c-label">🥚 TU COLECCIÓN DE DINOS (${p.done}/${p.total})</span>
       ${ENGLISH_UNITS.map(u => {
@@ -163,7 +165,7 @@ function showEnglishHome() {
       const st = S.english[u.id] || {};
       return `
         <button class="item-card" data-unit="${idx}">
-          <span class="item-emoji">${u.emoji}</span>
+          ${u.img ? imgTag(u.img, 'item-img' + (u.img === 'malcolm' ? ' photo' : ''), u.title) : `<span class="item-emoji">${u.emoji}</span>`}
           <span class="item-body">
             <span class="item-title">Unidad ${idx + 1}: ${esc(u.title)}</span>
             <span class="item-sub">${esc(u.desc)}${st.best ? ` · Mejor: ${st.best}/10` : ''}</span>
