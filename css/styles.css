@@ -445,6 +445,14 @@ p.screen-sub { color: var(--muted); margin-bottom: 18px; font-size: .95rem; }
 }
 .modal input:focus { border-color: var(--accent); }
 
+.login-input {
+  width: 100%; padding: 13px 16px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.2); background: rgba(0,0,0,.3);
+  color: var(--text); font-size: 1.05rem; font-weight: 700; text-align: center;
+  margin-bottom: 12px; outline: none;
+}
+.login-input:focus { border-color: var(--accent); }
+
 /* ===== XP flotante y confeti ===== */
 .xp-float {
   position: fixed; z-index: 200; pointer-events: none;

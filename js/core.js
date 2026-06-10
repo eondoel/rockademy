@@ -29,7 +29,10 @@ function loadState() {
 }
 
 let S = loadState();
-function save() { localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+function save() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(S));
+  if (typeof scheduleCloudSave === 'function') scheduleCloudSave();
+}
 
 /* ---------- Helpers ---------- */
 const $ = (sel) => document.querySelector(sel);

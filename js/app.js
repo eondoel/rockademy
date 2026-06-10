@@ -44,6 +44,7 @@ function showHome() {
     <div class="footer-links">
       <button id="go-guide">👨‍👦 Guía para papá</button>
       <button id="go-name">✏️ Cambiar nombre</button>
+      ${typeof accountFooterHTML === 'function' ? accountFooterHTML() : ''}
     </div>
   `;
   $('#w-english').addEventListener('click', showEnglishHome);
@@ -51,6 +52,7 @@ function showHome() {
   $('#w-tech').addEventListener('click', showTechHome);
   $('#go-guide').addEventListener('click', showGuide);
   $('#go-name').addEventListener('click', () => askName(true));
+  if (typeof bindAccountFooter === 'function') bindAccountFooter();
 }
 
 function showGuide() {
@@ -67,7 +69,7 @@ function showGuide() {
         <li>🤖 <b>Robo-Steve:</b> enseña ideas reales de programación (secuencias, funciones, bucles). Si se atora, pregúntale: "¿qué hace el robot paso por paso?"</li>
         <li>✨ <b>Misiones Claude:</b> están pensadas para hacerlas JUNTOS en claude.ai. Él marca la casilla cuando las completa. Es el puente entre la app y la IA real.</li>
         <li>🏆 <b>Recompensas:</b> dinos (inglés), esferas del dragón (mate) y diamantes (tecnología). Pregúntale por su colección: presumirla es parte de la motivación.</li>
-        <li>💾 El progreso se guarda en este navegador (localStorage). Usen siempre el mismo dispositivo y navegador.</li>
+        <li>💾 <b>Con cuenta</b> (usuario y contraseña), el avance se guarda en la nube y lo sigue a cualquier dispositivo. <b>Sin cuenta</b>, queda solo en este navegador. Importante: no hay recuperación de contraseña — anótenla en un lugar seguro.</li>
       </ul>
       <p class="muted">Zona de peligro:</p>
       <button class="btn small secondary" id="reset-all" style="border-color:var(--red);color:var(--red)">🗑️ Borrar todo el progreso</button>
@@ -124,6 +126,6 @@ function askName(canCancel) {
 document.addEventListener('DOMContentLoaded', () => {
   renderHeader();
   $('#btn-home').addEventListener('click', showHome);
-  showHome();
-  if (!S.name) askName(false);
+  if (typeof initCloud === 'function') initCloud();
+  else { showHome(); if (!S.name) askName(false); }
 });
