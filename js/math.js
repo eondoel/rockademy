@@ -24,7 +24,7 @@ function genEnteros() {
     const a = ri(-20, 20), b = ri(-20, 20);
     const ans = a + b;
     return {
-      text: `${fmtNeg(a)} + ${fmtNeg(b)} = ?`, emoji: '🧮',
+      text: `${fmtNeg(a)} + ${fmtNeg(b)} = ?`, emoji: '🧮', img: 'vegeta',
       answer: String(ans), options: numOptions(ans, 6),
       note: 'Recuerda: sumar un negativo es restar',
     };
@@ -33,7 +33,7 @@ function genEnteros() {
     const a = ri(-15, 15), b = ri(1, 20);
     const ans = a - b;
     return {
-      text: `${fmtNeg(a)} − ${b} = ?`, emoji: '🧮',
+      text: `${fmtNeg(a)} − ${b} = ?`, emoji: '🧮', img: 'gohan',
       answer: String(ans), options: numOptions(ans, 6),
       note: 'En la recta numérica, restar es moverse a la izquierda',
     };
@@ -64,7 +64,7 @@ function genFracciones() {
     const d = pick([4, 6, 8, 10, 12]), mult = d / pick([2]);
     const ans = mult; // 1/2 = x/d
     return {
-      text: `Fracciones equivalentes: 1/2 = ?/${d}`, emoji: '🍕',
+      text: `Fracciones equivalentes: 1/2 = ?/${d}`, emoji: '🍕', img: 'mc_cake',
       answer: fracStr(ans, d),
       options: optSet(fracStr(ans, d), [fracStr(ans + 1, d), fracStr(ans - 1, d), fracStr(d, d), fracStr(ans + 2, d)]),
       note: 'Multiplica arriba y abajo por el mismo número',
@@ -75,7 +75,7 @@ function genFracciones() {
     const a = ri(1, d - 2), b = ri(1, d - a - 1);
     const ans = fracStr(a + b, d);
     return {
-      text: `${fracStr(a, d)} + ${fracStr(b, d)} = ?`, emoji: '➕',
+      text: `${fracStr(a, d)} + ${fracStr(b, d)} = ?`, emoji: '➕', img: 'gohan',
       answer: ans,
       options: optSet(ans, [fracStr(a + b, d * 2), fracStr(a + b + 1, d), fracStr(Math.abs(a - b) || 1, d), fracStr(a + b + 2, d)]),
       note: 'Mismo denominador: solo suma los de arriba',
@@ -86,7 +86,7 @@ function genFracciones() {
     const [n1, d1, n2, d2] = pick(pairs);
     const bigger = (n1 / d1 > n2 / d2) ? fracStr(n1, d1) : fracStr(n2, d2);
     return {
-      text: `¿Cuál fracción es MAYOR?`, emoji: '⚖️',
+      text: `¿Cuál fracción es MAYOR?`, emoji: '⚖️', img: 'dewey',
       answer: bigger,
       options: shuffle([fracStr(n1, d1), fracStr(n2, d2), 'son iguales', 'no se puede saber']),
       note: 'Compara multiplicando cruzado',
@@ -96,7 +96,7 @@ function genFracciones() {
   const ans = fracStr(d - eaten, d);
   return {
     text: `Reese se comió ${fracStr(eaten, d)} de la pizza. ¿Qué fracción queda para Malcolm?`,
-    emoji: '🍕', img: 'malcolm', answer: ans,
+    emoji: '🍕', img: 'reese', answer: ans,
     options: optSet(ans, [fracStr(eaten, d), fracStr(d - eaten + 1 > d ? 1 : d - eaten + 1, d), '1/2', fracStr(1, d), fracStr(d - 1, d)]),
     note: 'El total de la pizza es ' + fracStr(d, d),
   };
@@ -120,7 +120,7 @@ function genDecimales() {
     const a = ri(11, 99) / 10, mult = pick([10, 100]);
     const ans = Math.round(a * mult * 100) / 100;
     return {
-      text: `${a} × ${mult} = ?`, emoji: '✖️',
+      text: `${a} × ${mult} = ?`, emoji: '✖️', img: 'bulma',
       answer: String(ans),
       options: shuffle([String(ans), String(ans / 10), String(ans * 10), String(ans + 1)]),
       note: `Multiplicar por ${mult} mueve el punto ${mult === 10 ? '1 lugar' : '2 lugares'} a la derecha`,
@@ -130,7 +130,7 @@ function genDecimales() {
   const ans = (pay * 100 - cost) / 100;
   return {
     text: `Compras un elixir de ${cost / 100} monedas y pagas con un billete de ${pay}. ¿Cuánto te dan de cambio?`,
-    emoji: '🧪', img: 'llama', answer: String(ans),
+    emoji: '🧪', img: 'chugjug', answer: String(ans),
     options: shuffle([String(ans), String(ans + 1), String(Math.max(0.5, ans - 1)), String((pay * 100 - cost + 50) / 100)]),
     note: 'Cambio = lo que pagas − lo que cuesta',
   };
@@ -189,7 +189,7 @@ function genEcuaciones() {
   if (v === 2) {
     const a = ri(2, 9);
     return {
-      text: `${a}x = ${a * x}<br>¿Cuánto vale x?`, emoji: '🧩',
+      text: `${a}x = ${a * x}<br>¿Cuánto vale x?`, emoji: '🧩', img: 'vegeta',
       answer: String(x), options: numOptions(x, 4),
       note: `Divide los dos lados entre ${a}`,
     };
@@ -197,7 +197,7 @@ function genEcuaciones() {
   if (v === 3) {
     const a = ri(2, 6), b = ri(1, 15);
     return {
-      text: `${a}x + ${b} = ${a * x + b}<br>¿Cuánto vale x?`, emoji: '🧩',
+      text: `${a}x + ${b} = ${a * x + b}<br>¿Cuánto vale x?`, emoji: '🧩', img: 'gohan',
       answer: String(x), options: numOptions(x, 4),
       note: `Primero resta ${b}, luego divide entre ${a}`,
     };
@@ -227,7 +227,7 @@ function genGeometria() {
     const ans = 2 * (a + b);
     return {
       text: `Pones una cerca alrededor de un corral de ${a} m por ${b} m. ¿Cuántos metros de cerca necesitas?`,
-      emoji: '🐮', answer: String(ans), options: numOptions(ans, 6),
+      emoji: '🐮', img: 'cow', answer: String(ans), options: numOptions(ans, 6),
       note: 'Perímetro = 2 × (largo + ancho)',
     };
   }
@@ -235,8 +235,8 @@ function genGeometria() {
     const b = pick([4, 6, 8, 10, 12]), h = ri(3, 9);
     const ans = b * h / 2;
     return {
-      text: `La vela triangular de tu barco mide ${b} m de base y ${h} m de altura. ¿Cuál es su área?`,
-      emoji: '⛵', answer: String(ans) + ' m²',
+      text: `La vela triangular de tu barco mide ${b} m de base y ${h} m de altura. ¿Cuál es su área? (¡cuidado con el Mosasaurus!)`,
+      emoji: '⛵', img: 'mosasaurus', answer: String(ans) + ' m²',
       options: shuffle([ans + ' m²', (b * h) + ' m²', (ans + 4) + ' m²', Math.max(2, ans - 3) + ' m²']),
       note: 'Área del triángulo = (base × altura) ÷ 2',
     };
@@ -245,7 +245,7 @@ function genGeometria() {
   const ans = l * w * h;
   return {
     text: `Un cofre gigante mide ${l} × ${w} × ${h} bloques. ¿Cuántos bloques caben dentro (volumen)?`,
-    emoji: '📦', img: 'diamond', answer: String(ans), options: numOptions(ans, 8),
+    emoji: '📦', img: 'chest', answer: String(ans), options: numOptions(ans, 8),
     note: 'Volumen = largo × ancho × alto',
   };
 }
@@ -263,7 +263,7 @@ function genProbabilidad() {
     const ans = `${casos.n}/6`;
     return {
       text: `Lanzas un dado. ¿Cuál es la probabilidad de sacar ${casos.q}?`,
-      emoji: '🎲', answer: ans,
+      emoji: '🎲', img: 'peely', answer: ans,
       options: optSet(ans, [`${casos.n + 1}/6`, `${Math.max(1, casos.n - 1)}/6`, `${casos.n}/12`, `${casos.n + 2}/6`, '5/6']),
       note: 'Probabilidad = casos favorables / casos posibles (6)',
     };
@@ -274,7 +274,7 @@ function genProbabilidad() {
     const ans = `${esm}/${total}`;
     return {
       text: `En un cofre hay ${esm} esmeraldas y ${piedra} piedras. Sacas una sin ver. ¿Probabilidad de que sea esmeralda?`,
-      emoji: '💚', answer: ans,
+      emoji: '💚', img: 'emerald', answer: ans,
       options: optSet(ans, [`${piedra}/${total}`, `${esm}/${piedra}`, `1/${total}`, `${esm + 1}/${total}`, `${esm}/${total + 1}`]),
       note: `Total de objetos: ${total}`,
     };
@@ -282,20 +282,20 @@ function genProbabilidad() {
   const ans = '1/2';
   return {
     text: `Lanzas una moneda para ver quién escoge primero en Fortnite. ¿Probabilidad de que caiga águila?`,
-    emoji: '🪙', answer: ans,
+    emoji: '🪙', img: 'battlebus', answer: ans,
     options: shuffle([ans, '1/4', '2/3', '1']),
     note: 'Dos resultados posibles, uno favorable',
   };
 }
 
 const MATH_TOPICS = [
-  { id: 'enteros', title: 'Números enteros', emoji: '🌡️', desc: 'Positivos y negativos', gen: genEnteros },
-  { id: 'fracciones', title: 'Fracciones', emoji: '🍕', desc: 'Partes de un todo', gen: genFracciones },
-  { id: 'decimales', title: 'Decimales', emoji: '💰', desc: 'Puntos y monedas', gen: genDecimales },
-  { id: 'porcentajes', title: 'Porcentajes', emoji: '📊', desc: 'Descuentos y puntería', gen: genPorcentajes },
-  { id: 'ecuaciones', title: 'Ecuaciones', emoji: '🧩', desc: 'Encuentra el valor de x', gen: genEcuaciones },
-  { id: 'geometria', title: 'Geometría', emoji: '📐', desc: 'Áreas, perímetros y volumen', gen: genGeometria },
-  { id: 'probabilidad', title: 'Probabilidad', emoji: '🎲', desc: '¿Qué tan posible es?', gen: genProbabilidad },
+  { id: 'enteros', title: 'Números enteros', emoji: '🌡️', img: 'pickaxe', desc: 'Positivos y negativos', gen: genEnteros },
+  { id: 'fracciones', title: 'Fracciones', emoji: '🍕', img: 'reese', desc: 'Partes de un todo', gen: genFracciones },
+  { id: 'decimales', title: 'Decimales', emoji: '💰', img: 'vbucks', desc: 'Puntos y monedas', gen: genDecimales },
+  { id: 'porcentajes', title: 'Porcentajes', emoji: '📊', img: 'roshi', desc: 'Descuentos y puntería', gen: genPorcentajes },
+  { id: 'ecuaciones', title: 'Ecuaciones', emoji: '🧩', img: 'piccolo', desc: 'Encuentra el valor de x', gen: genEcuaciones },
+  { id: 'geometria', title: 'Geometría', emoji: '📐', img: 'grass', desc: 'Áreas, perímetros y volumen', gen: genGeometria },
+  { id: 'probabilidad', title: 'Probabilidad', emoji: '🎲', img: 'chest', desc: '¿Qué tan posible es?', gen: genProbabilidad },
 ];
 
 function mathProgress() {
@@ -314,11 +314,11 @@ function showMathHome() {
     ${imgTag(allDone ? 'shenron' : 'esfera', 'scene-banner', 'Esferas del dragón')}
     <div class="collection">
       <span class="c-label">🔮 ESFERAS DEL DRAGÓN (${p.done}/7)</span>
-      ${MATH_TOPICS.map((t, i) => {
+      ${MATH_TOPICS.map((t) => {
         const done = S.math[t.id] && S.math[t.id].done;
-        return `<span class="c-item ${done ? '' : 'locked'}" title="${esc(t.title)}">${done ? '🟠' : '⚫'}</span>`;
+        return `<span class="c-item" title="${esc(t.title)}">${imgTag('esfera_bola', 'status-img' + (done ? '' : ' gray'), t.title)}</span>`;
       }).join('')}
-      ${allDone ? '<span class="c-item">🐉✨</span>' : ''}
+      ${allDone ? '<span class="c-item">✨</span>' : ''}
     </div>
     ${allDone ? `<div class="reward-banner"><span class="r-emoji">🐉</span>¡SHENLONG HA SIDO INVOCADO! Dominaste las matemáticas de tu grado. Sigue entrenando para mantener tu poder.</div>` : ''}
     <p class="muted" style="font-size:.85rem;margin-top:8px">📏 Reglas: cada misión tiene 10 problemas. Necesitas <b>8 aciertos</b> para ganar la esfera 🟠. Si fallas, la app te explica cómo se resolvía. Puedes reintentar las veces que quieras.</p>
@@ -327,12 +327,12 @@ function showMathHome() {
       const st = S.math[t.id] || {};
       return `
         <button class="item-card" data-topic="${idx}">
-          <span class="item-emoji">${t.emoji}</span>
+          ${imgTag(t.img, 'item-img', t.title)}
           <span class="item-body">
             <span class="item-title">${esc(t.title)}</span>
             <span class="item-sub">${esc(t.desc)}${st.best ? ` · Mejor: ${st.best}/10` : ''}</span>
           </span>
-          <span class="item-status">${st.done ? '🟠' : '⚫'}</span>
+          <span class="item-status">${imgTag('esfera_bola', 'status-img' + (st.done ? '' : ' gray'), 'esfera')}</span>
         </button>`;
     }).join('')}
     <p class="center muted" style="margin-top:10px">♾️ Los problemas cambian cada vez: puedes entrenar sin límite.</p>
@@ -352,6 +352,7 @@ function startMathQuiz(idx) {
     if (seen.has(q.text)) continue; // evitar repetidas en la misma ronda
     seen.add(q.text);
     q.type = 'mc';
+    q.img = q.img || t.img; // toda pregunta lleva su motivador visual
     qs.push(q);
   }
   startQuiz({
@@ -371,7 +372,7 @@ function startMathQuiz(idx) {
           const p = mathProgress();
           slot.innerHTML = `
             <div class="reward-banner">
-              ${imgTag(p.done === 7 ? 'shenron' : 'esfera', 'r-img', 'Esfera del dragón')}
+              ${imgTag(p.done === 7 ? 'shenron' : 'esfera_bola', 'r-img', 'Esfera del dragón')}
               ¡Ganaste la esfera de ${esc(t.title)}! Llevas ${p.done} de 7.
               ${p.done === 7 ? '<br>🐉 ¡¡JUNTASTE LAS 7!! SHENLONG TE ESPERA EN LA TORRE.' : ''}
             </div>`;

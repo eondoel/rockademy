@@ -103,14 +103,14 @@ function showTechHome() {
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">💎 Mundo Tecnología</h1>
     <p class="screen-sub">Aprende a pensar como programador y a usar la inteligencia artificial como un pro.</p>
-    <button class="world-card tech" id="go-robot">
-      <span class="big-emoji">🤖</span>
+    <button class="world-card tech has-hero" id="go-robot">
+      ${imgTag('steve', 'hero-img', 'Steve')}
       <h2>Robo-Steve: lógica de programación</h2>
       <p>Programa al robot para llegar al diamante. Secuencias, funciones y bucles.</p>
       <div class="progress-note">💎 ${rp.done}/${rp.total} niveles</div>
     </button>
-    <button class="world-card tech" id="go-claude">
-      <span class="big-emoji">✨</span>
+    <button class="world-card tech has-hero" id="go-claude">
+      ${imgTag('mrdna', 'hero-img', 'Mr. DNA')}
       <h2>Academia Claude: domina la IA</h2>
       <p>Aprende qué es Claude, cómo pedirle cosas y misiones reales para hacer con tu papá.</p>
       <div class="progress-note">${claudeDone ? '🏆 Maestro de la IA' : `📖 ${S.claude.read.length}/${CLAUDE_LESSONS.length} lecciones`}</div>
@@ -135,12 +135,12 @@ function showRobotLevels() {
         : i < 10 ? '🔴 Pro: bucles' : '👑 Reto final';
       return `
         <button class="item-card" data-lv="${i}" ${locked ? 'disabled' : ''}>
-          <span class="item-emoji">${locked ? '🔒' : (done ? '💎' : '🤖')}</span>
+          ${imgTag('steve', 'item-img' + (locked ? ' pending' : ''), 'Steve')}
           <span class="item-body">
             <span class="item-title">Nivel ${i + 1}: ${esc(lv.name)}</span>
             <span class="item-sub">${tag}</span>
           </span>
-          <span class="item-status">${done ? '✅' : (locked ? '' : '▶️')}</span>
+          <span class="item-status">${done ? imgTag('diamond', 'status-img', 'diamante') : (locked ? '🔒' : '▶️')}</span>
         </button>`;
     }).join('')}
   `;
@@ -216,7 +216,7 @@ function showRobotLevel(idx) {
       </details>
       <div class="robot-wrap">
         ${gridHTML()}
-        ${hintShown >= 1 ? `<div class="hint-box">💡 ${lv.hint1}</div>` : ''}
+        ${hintShown >= 1 ? `<div class="hint-box">${imgTag('mrdna', 'icon-img', 'Mr. DNA')} <b>Mr. DNA dice:</b> ${lv.hint1}</div>` : ''}
         ${hintShown >= 2 ? `<div class="hint-box">🆘 ${lv.hint2}</div>` : ''}
         <div class="robot-msg ${msgClass || ''}" id="r-msg">${msg || ''}</div>
         <div class="prog-section ${activeList === 'main' ? 'active' : ''}" id="sec-main">
@@ -588,8 +588,9 @@ function showClaudeLesson(idx) {
 
 function startClaudeQuiz() {
   if (S.claude.read.length < CLAUDE_LESSONS.length) return;
-  const qs = shuffle(CLAUDE_QUIZ).map(q => ({
-    type: 'mc', emoji: q.emoji, text: q.text,
+  const motivadores = shuffle(['mrdna', 'goku', 'steve', 'peely', 'reese', 'blue', 'vegeta', 'dewey']);
+  const qs = shuffle(CLAUDE_QUIZ).map((q, i) => ({
+    type: 'mc', emoji: q.emoji, img: motivadores[i % motivadores.length], text: q.text,
     options: shuffle(q.options.slice()), answer: q.answer, note: q.note,
   }));
   startQuiz({

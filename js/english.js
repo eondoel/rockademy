@@ -5,7 +5,7 @@
 
 const ENGLISH_UNITS = [
   {
-    id: 'saludos', title: 'Saludos', emoji: '👋', dino: '🦕',
+    id: 'saludos', title: 'Saludos', emoji: '👋', dinoImg: 'triceratops', img: 'mrdna',
     desc: 'Hello! Tus primeras palabras',
     items: [
       { en: 'hello', es: 'hola', e: '👋' },
@@ -21,7 +21,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'numeros', title: 'Números', emoji: '🔢', dino: '🦖', img: 'vbucks',
+    id: 'numeros', title: 'Números', emoji: '🔢', dinoImg: 'mosasaurus', img: 'vbucks',
     desc: 'One, two, three… ¡a contar V-monedas!',
     items: [
       { en: 'one', es: 'uno', e: '1️⃣' },
@@ -39,7 +39,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'colores', title: 'Colores', emoji: '🎨', dino: '🐊',
+    id: 'colores', title: 'Colores', emoji: '🎨', dinoImg: 'dilophosaurus', img: 'peely',
     desc: 'Pinta tu mundo en inglés',
     items: [
       { en: 'red', es: 'rojo', e: '🔴' },
@@ -55,7 +55,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'criaturas', title: 'Criaturas', emoji: '🐾', dino: '🐢', img: 'raptor',
+    id: 'criaturas', title: 'Criaturas', emoji: '🐾', dinoImg: 'spinosaurus', img: 'raptor',
     desc: 'Los mobs y bestias del multiverso',
     items: [
       { en: 'dinosaur', es: 'dinosaurio', e: '🦖' },
@@ -71,7 +71,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'familia', title: 'La familia', emoji: '👨‍👩‍👦', dino: '🦎', img: 'malcolm',
+    id: 'familia', title: 'La familia', emoji: '👨‍👩‍👦', dinoImg: 'brachiosaurus', img: 'malcolm',
     desc: 'Como en Malcolm: toda la familia',
     items: [
       { en: 'family', es: 'familia', e: '👨‍👩‍👧‍👦' },
@@ -87,7 +87,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'comida', title: 'Comida', emoji: '🍕', dino: '🐍',
+    id: 'comida', title: 'Comida', emoji: '🍕', dinoImg: 'trex', img: 'mc_cake',
     desc: 'Recarga energía como Goku',
     items: [
       { en: 'apple', es: 'manzana', e: '🍎' },
@@ -103,7 +103,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'acciones', title: 'Acciones gamer', emoji: '🎮', dino: '🦂', img: 'llama',
+    id: 'acciones', title: 'Acciones gamer', emoji: '🎮', dinoImg: 'blue', img: 'llama',
     desc: 'Run, jump, build, mine…',
     items: [
       { en: 'run', es: 'correr', e: '🏃' },
@@ -121,7 +121,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'frases', title: 'Frases de batalla', emoji: '⚡', dino: '🐉', img: 'goku',
+    id: 'frases', title: 'Frases de batalla', emoji: '⚡', dinoImg: 'pteranodon', img: 'goku',
     desc: 'Frases completas para sonar pro',
     items: [
       { en: "let's go", es: 'vamos', e: '🚀' },
@@ -137,7 +137,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'adjetivos', title: 'Adjetivos épicos', emoji: '💪', dino: '🦣', img: 'goku',
+    id: 'adjetivos', title: 'Adjetivos épicos', emoji: '💪', dinoImg: 'stegosaurus', img: 'vegeta',
     desc: 'Describe a tus personajes',
     items: [
       { en: 'big', es: 'grande', e: '🐘' },
@@ -155,7 +155,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'lugares', title: 'Lugares del mapa', emoji: '🗺️', dino: '🦤',
+    id: 'lugares', title: 'Lugares del mapa', emoji: '🗺️', dinoImg: 'ankylosaurus', img: 'battlebus',
     desc: 'Explora el mundo en inglés',
     items: [
       { en: 'house', es: 'casa', e: '🏠' },
@@ -171,7 +171,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'preguntas', title: 'Preguntas mágicas', emoji: '❓', dino: '🐲', img: 'raptor',
+    id: 'preguntas', title: 'Preguntas mágicas', emoji: '❓', dinoImg: 'compy', img: 'enderman',
     desc: 'What, where, who… pregunta todo',
     items: [
       { en: 'what', es: 'qué', e: '❓' },
@@ -187,7 +187,7 @@ const ENGLISH_UNITS = [
     ],
   },
   {
-    id: 'oraciones', title: 'Oraciones completas', emoji: '🗣️', dino: '🦈', img: 'llama',
+    id: 'oraciones', title: 'Oraciones completas', emoji: '🗣️', dinoImg: 'indominus', img: 'llama',
     desc: 'Tu primer nivel de conversación',
     items: [
       { en: 'I play Minecraft', es: 'yo juego Minecraft', e: '🎮' },
@@ -204,6 +204,44 @@ const ENGLISH_UNITS = [
   },
 ];
 
+/* Imagen "motivadora" por palabra (cuando existe en el catálogo) */
+const WORD_IMG = {
+  // saludos
+  'hello': 'mrdna', 'friend': 'peely', 'my name is': 'steve',
+  // números
+  'ten': 'diamond', 'twenty': 'emerald', 'one hundred': 'vbucks',
+  // colores
+  'red': 'mc_apple', 'green': 'creeper', 'yellow': 'peely', 'black': 'enderman',
+  'white': 'skeleton', 'purple': 'boogie', 'pink': 'pig', 'brown': 'horse', 'orange': 'esfera_bola', 'blue': 'diamond',
+  // criaturas
+  'dinosaur': 'trex', 'dragon': 'shenron', 'wolf': 'wolf', 'spider': 'spider',
+  'snake': 'dilophosaurus', 'horse': 'horse', 'chicken': 'mc_chicken', 'cow': 'cow', 'pig': 'pig',
+  // familia
+  'family': 'malcolm', 'mother': 'lois', 'father': 'hal', 'brother': 'reese',
+  'boy': 'dewey', 'grandpa': 'roshi',
+  // comida
+  'apple': 'mc_apple', 'bread': 'mc_bread', 'water': 'mc_water', 'milk': 'mc_milk',
+  'egg': 'mc_egg', 'cake': 'mc_cake', 'cookie': 'mc_cookie',
+  // acciones
+  'run': 'blue', 'mine': 'pickaxe', 'build': 'grass', 'dance': 'boogie',
+  'fight': 'vegeta', 'fly': 'pteranodon', 'win': 'gold', 'lose': 'zombie', 'eat': 'mc_cake',
+  // frases
+  "let's go": 'battlebus', 'help': 'creeper', 'I have': 'chest', 'I want': 'diamond',
+  'I am ready': 'goku', 'I am hungry': 'mc_bread',
+  // adjetivos
+  'big': 'brachiosaurus', 'small': 'compy', 'fast': 'blue', 'slow': 'mosasaurus',
+  'strong': 'vegeta', 'weak': 'skeleton', 'old': 'roshi', 'happy': 'peely', 'angry': 'indominus',
+  // lugares
+  'house': 'mc_bed', 'island': 'mosasaurus', 'cave': 'spider', 'forest': 'wolf', 'river': 'mc_water',
+  // preguntas
+  'what is this': 'mrdna', 'where is the dragon': 'shenron', 'who are you': 'enderman',
+  // oraciones
+  'I play Minecraft': 'steve', 'he runs fast': 'blue', 'she is my sister': 'lois',
+  'we are friends': 'peely', 'I can fly': 'pteranodon', 'I have ten diamonds': 'diamond',
+  'do you like pizza': 'reese', 'the dragon is very strong': 'shenron',
+  "let's build a house": 'grass', 'good luck, have fun': 'battlebus',
+};
+
 function englishProgress() {
   const done = ENGLISH_UNITS.filter(u => S.english[u.id] && S.english[u.id].done).length;
   return { done, total: ENGLISH_UNITS.length };
@@ -217,13 +255,13 @@ function showEnglishHome() {
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">🦖 Isla Jurásica: Inglés</h1>
     <p class="screen-sub">Aprende palabras, escúchalas y gana misiones. Cada unidad ganada hace nacer un dino para tu colección.</p>
-    ${imgTag('trex', 'scene-banner', 'T-Rex de Jurassic Park')}
+    ${imgTag('trex', 'scene-banner contain', 'T-Rex de Jurassic Park')}
     <p class="muted" style="font-size:.85rem;margin-bottom:12px">📏 Reglas: en cada unidad primero <b>aprende</b> las palabras con sonido 🔊 y repítelas en voz alta. Luego juega la <b>misión</b>: 10 retos, con <b>8 aciertos</b> nace tu dino 🥚→🦖.</p>
     <div class="collection">
-      <span class="c-label">🥚 TU COLECCIÓN DE DINOS (${p.done}/${p.total})</span>
+      <span class="c-label">🥚 TU COLECCIÓN DE DINOS (${p.done}/${p.total}) — los oscuros aún no nacen</span>
       ${ENGLISH_UNITS.map(u => {
         const done = S.english[u.id] && S.english[u.id].done;
-        return `<span class="c-item ${done ? '' : 'locked'}" title="${esc(u.title)}">${done ? u.dino : '🥚'}</span>`;
+        return `<span class="c-item" title="${esc(u.title)}">${imgTag(u.dinoImg, 'status-img' + (done ? '' : ' pending'), u.title)}</span>`;
       }).join('')}
     </div>
     <div class="spacer"></div>
@@ -231,12 +269,12 @@ function showEnglishHome() {
       const st = S.english[u.id] || {};
       return `
         <button class="item-card" data-unit="${idx}">
-          ${u.img ? imgTag(u.img, 'item-img' + (u.img === 'malcolm' ? ' photo' : ''), u.title) : `<span class="item-emoji">${u.emoji}</span>`}
+          ${imgTag(u.img, 'item-img', u.title)}
           <span class="item-body">
             <span class="item-title">Unidad ${idx + 1}: ${esc(u.title)}</span>
             <span class="item-sub">${esc(u.desc)}${st.best ? ` · Mejor: ${st.best}/10` : ''}</span>
           </span>
-          <span class="item-status">${st.done ? u.dino : '🥚'}</span>
+          <span class="item-status">${imgTag(u.dinoImg, 'status-img' + (st.done ? '' : ' pending'), 'dino')}</span>
         </button>`;
     }).join('')}
   `;
@@ -258,10 +296,11 @@ function showEnglishUnit(idx) {
       <h2>1. Aprende las palabras</h2>
       <p>Tarjetas con sonido. Toca 🔊 y repite en voz alta cada palabra.</p>
     </button>
-    <button class="world-card english" id="go-quiz">
+    <button class="world-card english has-hero" id="go-quiz">
+      ${imgTag(u.dinoImg, 'hero-img', 'dino')}
       <span class="big-emoji">🎯</span>
       <h2>2. Misión: ¡demuestra tu poder!</h2>
-      <p>10 retos. Acierta 8 o más y nace tu dino ${u.dino}${st.done ? ' (¡ya lo tienes!)' : ''}.</p>
+      <p>10 retos. Acierta 8 o más y nace este dino${st.done ? ' (¡ya lo tienes!)' : ' que ves aquí'}.</p>
       ${st.best ? `<div class="progress-note">Mejor puntaje: ${st.best}/10</div>` : ''}
     </button>
   `;
@@ -276,10 +315,11 @@ function showFlashcards(idx) {
   const app = $('#app');
   function draw() {
     const item = u.items[i];
+    const wimg = WORD_IMG[item.en];
     app.innerHTML = `
       <button class="back-link" id="back">← Unidad ${idx + 1}</button>
       <div class="flash">
-        <div class="f-emoji">${item.e}</div>
+        ${wimg ? imgTag(wimg, 'q-img') : `<div class="f-emoji">${item.e}</div>`}
         <div class="f-en">${esc(item.en)}</div>
         <div class="f-es">${esc(item.es)}</div>
         <button class="q-say" id="f-say" title="Escuchar">🔊</button>
@@ -309,28 +349,29 @@ function buildEnglishQuestions(u) {
   for (let n = 0; n < 10; n++) {
     const item = pool[n % pool.length];
     const others = shuffle(u.items.filter(x => x.en !== item.en)).slice(0, 3);
+    const wimg = WORD_IMG[item.en] || u.img; // toda pregunta lleva su motivador visual
     const types = ['trad', 'rev', 'listen'];
     if (/^[a-z]{3,8}$/.test(item.en)) types.push('spell', 'spell');
     const t = pick(types);
     if (t === 'spell') {
-      qs.push({ type: 'spell', es: item.es, emoji: item.e, word: item.en });
+      qs.push({ type: 'spell', es: item.es, emoji: item.e, img: WORD_IMG[item.en], word: item.en });
     } else if (t === 'trad') {
       qs.push({
-        type: 'mc', emoji: item.e, say: item.en,
+        type: 'mc', emoji: item.e, img: wimg, say: item.en,
         text: `¿Qué significa <b style="color:var(--teal)">${esc(item.en)}</b>?`,
         options: shuffle([item.es, ...others.map(o => o.es)]),
         answer: item.es,
       });
     } else if (t === 'rev') {
       qs.push({
-        type: 'mc', emoji: item.e,
+        type: 'mc', emoji: item.e, img: wimg,
         text: `¿Cómo se dice <b style="color:var(--accent)">${esc(item.es)}</b> en inglés?`,
         options: shuffle([item.en, ...others.map(o => o.en)]),
         answer: item.en,
       });
     } else {
       qs.push({
-        type: 'mc', emoji: '🎧', say: item.en,
+        type: 'mc', emoji: '🎧', img: u.img, say: item.en,
         text: 'Escucha con atención… ¿qué palabra es?',
         options: shuffle([item.en, ...others.map(o => o.en)]),
         answer: item.en,
@@ -357,8 +398,8 @@ function startEnglishQuiz(idx) {
         const slot = $('#reward-slot');
         if (slot) slot.innerHTML = `
           <div class="reward-banner">
-            <span class="r-emoji">🥚 → ${u.dino}</span>
-            ¡Tu huevo eclosionó! Nuevo dino en tu colección.
+            ${imgTag(u.dinoImg, 'r-img', 'dino nuevo')}
+            ¡Tu huevo eclosionó! Nuevo dino en tu colección. 🥚✨
           </div>`;
       }
     },

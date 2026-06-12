@@ -52,22 +52,80 @@ function esc(s) {
 
 /* ---------- Imágenes de franquicias (proyecto personal, sin lucro) ---------- */
 const IMG = {
+  // Dragon Ball
   goku: 'assets/img/goku.webp',
+  vegeta: 'assets/img/vegeta.webp',
+  piccolo: 'assets/img/piccolo.webp',
+  gohan: 'assets/img/gohan.webp',
+  bulma: 'assets/img/bulma.webp',
+  roshi: 'assets/img/roshi.webp',
   shenron: 'assets/img/shenron.webp',
-  esfera: 'assets/img/esfera.webp',
+  esfera: 'assets/img/esfera.webp',           // escena con las 7 esferas
+  esfera_bola: 'assets/img/esfera_bola.webp', // una esfera (icono)
+  // Jurassic Park
   trex: 'assets/img/trex.webp',
   raptor: 'assets/img/raptor.webp',
+  blue: 'assets/img/blue.webp',
+  mosasaurus: 'assets/img/mosasaurus.webp',
+  triceratops: 'assets/img/triceratops.webp',
+  brachiosaurus: 'assets/img/brachiosaurus.webp',
+  dilophosaurus: 'assets/img/dilophosaurus.webp',
+  spinosaurus: 'assets/img/spinosaurus.webp',
+  stegosaurus: 'assets/img/stegosaurus.webp',
+  pteranodon: 'assets/img/pteranodon.webp',
+  ankylosaurus: 'assets/img/ankylosaurus.webp',
+  indominus: 'assets/img/indominus.webp',
+  compy: 'assets/img/compy.webp',
+  mrdna: 'assets/img/mrdna.webp',
+  // Malcolm el de enmedio
+  malcolm: 'assets/img/malcolm.webp',
+  reese: 'assets/img/reese.webp',
+  dewey: 'assets/img/dewey.webp',
+  hal: 'assets/img/hal.webp',
+  lois: 'assets/img/lois.webp',
+  francis: 'assets/img/francis.webp',
+  // Minecraft
   creeper: 'assets/img/creeper.png',
   steve: 'assets/img/steve.png',
+  zombie: 'assets/img/zombie.png',
+  skeleton: 'assets/img/skeleton.png',
+  enderman: 'assets/img/enderman.png',
+  pig: 'assets/img/pig.png',
+  cow: 'assets/img/cow.png',
+  mc_chicken: 'assets/img/mc_chicken.png',
+  wolf: 'assets/img/wolf.png',
+  spider: 'assets/img/spider.png',
+  horse: 'assets/img/horse.png',
   diamond: 'assets/img/diamond.png',
+  emerald: 'assets/img/emerald.png',
+  gold: 'assets/img/gold.png',
+  chest: 'assets/img/chest.gif',
   grass: 'assets/img/grass.png',
   tnt: 'assets/img/tnt.png',
+  pickaxe: 'assets/img/pickaxe.png',
+  mc_cake: 'assets/img/mc_cake.png',
+  mc_apple: 'assets/img/mc_apple.png',
+  mc_bread: 'assets/img/mc_bread.png',
+  mc_egg: 'assets/img/mc_egg.png',
+  mc_milk: 'assets/img/mc_milk.png',
+  mc_water: 'assets/img/mc_water.png',
+  mc_cookie: 'assets/img/mc_cookie.png',
+  mc_bed: 'assets/img/mc_bed.png',
+  // Fortnite
   llama: 'assets/img/llama.webp',
   vbucks: 'assets/img/vbucks.webp',
-  malcolm: 'assets/img/malcolm.webp',
+  peely: 'assets/img/peely.webp',
+  battlebus: 'assets/img/battlebus.webp',
+  chugjug: 'assets/img/chugjug.webp',
+  boogie: 'assets/img/boogie.webp',
 };
+
+/* fotos / ilustraciones con fondo: se muestran recortadas en círculo */
+const IMG_PHOTO = new Set(['malcolm', 'reese', 'dewey', 'hal', 'lois', 'francis', 'blue', 'compy', 'roshi', 'mrdna', 'piccolo', 'esfera', 'shenron']);
+
 function imgTag(name, cls = '', alt = '') {
   if (!IMG[name]) return '';
+  if (IMG_PHOTO.has(name) && (cls.includes('item-img') || cls.includes('status-img') || cls.includes('icon-img'))) cls += ' photo';
   return `<img src="${IMG[name]}" class="${cls}" alt="${esc(alt)}" onerror="this.style.display='none'">`;
 }
 
@@ -334,7 +392,7 @@ function startQuiz(cfg) {
     app.innerHTML = `
       ${header()}
       <div class="q-card">
-        <div class="q-emoji">${q.emoji || '✏️'}</div>
+        ${q.img ? imgTag(q.img, 'q-img') : `<div class="q-emoji">${q.emoji || '✏️'}</div>`}
         <div class="q-text">Escribe en inglés: <b style="color:var(--accent)">${esc(q.es)}</b></div>
         <button class="q-say" id="q-say" title="Escuchar">🔊</button>
         <div class="spell-built" id="sp-built"></div>
