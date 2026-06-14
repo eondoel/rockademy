@@ -64,7 +64,7 @@ async function pushProgress() {
   if (!sb || !cloudUser) return;
   try {
     await sb.from('rockademy_progress')
-      .upsert({ user_id: cloudUser.id, data: S, updated_at: new Date().toISOString() });
+      .upsert({ user_id: cloudUser.id, username: cloudUser.username, data: S, updated_at: new Date().toISOString() });
   } catch (e) { /* sin red: queda el respaldo local */ }
 }
 

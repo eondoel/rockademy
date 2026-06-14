@@ -1,8 +1,9 @@
 'use strict';
 /* ===== Mundo Matemáticas: Torre de Entrenamiento Z 🐉 =====
    Temario de 1° de secundaria (SEP, México).
+   Cada tema: 3 lecciones (básico → misiones → combo) + EXAMEN final.
    Problemas generados al azar: práctica infinita.
-   Cada tema dominado = 1 esfera del dragón. Junta las 7. */
+   Aprobar el examen del tema = 1 esfera del dragón. */
 
 function fmtNeg(n) { return n < 0 ? `(${n})` : `${n}`; }
 
@@ -18,15 +19,15 @@ function optSet(answer, candidates) {
 }
 
 /* --- 1. Números enteros --- */
-function genEnteros() {
-  const v = ri(1, 4);
+function genEnteros(v) {
+  v = v || ri(1, 4);
   if (v === 1) {
     const a = ri(-20, 20), b = ri(-20, 20);
     const ans = a + b;
     return {
       text: `${fmtNeg(a)} + ${fmtNeg(b)} = ?`, emoji: '🧮', img: 'vegeta',
       answer: String(ans), options: numOptions(ans, 6),
-      note: 'Recuerda: sumar un negativo es restar',
+      note: 'Recuerda: sumar un negativo es restar', plain: `${fmtNeg(a)} + ${fmtNeg(b)}`, val: ans,
     };
   }
   if (v === 2) {
@@ -35,7 +36,7 @@ function genEnteros() {
     return {
       text: `${fmtNeg(a)} − ${b} = ?`, emoji: '🧮', img: 'gohan',
       answer: String(ans), options: numOptions(ans, 6),
-      note: 'En la recta numérica, restar es moverse a la izquierda',
+      note: 'En la recta numérica, restar es moverse a la izquierda', plain: `${fmtNeg(a)} − ${b}`, val: ans,
     };
   }
   if (v === 3) {
@@ -58,11 +59,11 @@ function genEnteros() {
 
 /* --- 2. Fracciones --- */
 function fracStr(n, d) { return `${n}/${d}`; }
-function genFracciones() {
-  const v = ri(1, 4);
+function genFracciones(v) {
+  v = v || ri(1, 4);
   if (v === 1) {
-    const d = pick([4, 6, 8, 10, 12]), mult = d / pick([2]);
-    const ans = mult; // 1/2 = x/d
+    const d = pick([4, 6, 8, 10, 12]);
+    const ans = d / 2;
     return {
       text: `Fracciones equivalentes: 1/2 = ?/${d}`, emoji: '🍕', img: 'mc_cake',
       answer: fracStr(ans, d),
@@ -103,11 +104,10 @@ function genFracciones() {
 }
 
 /* --- 3. Decimales --- */
-function dec(n) { return (n / 100).toFixed(2).replace(/\.?0+$/, m => m.includes('.') ? '' : m); }
-function genDecimales() {
-  const v = ri(1, 3);
+function genDecimales(v) {
+  v = v || ri(1, 3);
   if (v === 1) {
-    const a = ri(100, 2000), b = ri(100, 2000); // centésimos
+    const a = ri(100, 2000), b = ri(100, 2000);
     const ans = (a + b) / 100;
     return {
       text: `Una skin cuesta ${a / 100} monedas y un baile ${b / 100}. ¿Cuánto gastas en total?`,
@@ -124,6 +124,7 @@ function genDecimales() {
       answer: String(ans),
       options: shuffle([String(ans), String(ans / 10), String(ans * 10), String(ans + 1)]),
       note: `Multiplicar por ${mult} mueve el punto ${mult === 10 ? '1 lugar' : '2 lugares'} a la derecha`,
+      plain: `${a} × ${mult}`, val: ans,
     };
   }
   const pay = pick([50, 100, 200]), cost = ri(100, pay * 100 - 100);
@@ -137,16 +138,16 @@ function genDecimales() {
 }
 
 /* --- 4. Porcentajes --- */
-function genPorcentajes() {
-  const v = ri(1, 3);
-  const pcts = [10, 20, 25, 50, 75];
+function genPorcentajes(v) {
+  v = v || ri(1, 3);
   if (v === 1) {
-    const p = pick(pcts), base = pick([40, 60, 80, 120, 200, 400]);
+    const p = pick([10, 20, 25, 50, 75]), base = pick([40, 60, 80, 120, 200, 400]);
     const ans = base * p / 100;
     return {
-      text: `¿Cuánto es el ${p}% de ${base}?`, emoji: '📊',
+      text: `¿Cuánto es el ${p}% de ${base}?`, emoji: '📊', img: 'roshi',
       answer: String(ans), options: numOptions(ans, Math.max(4, Math.round(ans / 4))),
       note: `${p}% = ${p}/100. Multiplica y divide`,
+      plain: `el ${p}% de ${base}`, val: ans,
     };
   }
   if (v === 2) {
@@ -175,13 +176,13 @@ function genPorcentajes() {
 }
 
 /* --- 5. Ecuaciones --- */
-function genEcuaciones() {
-  const v = ri(1, 4);
+function genEcuaciones(v) {
+  v = v || ri(1, 4);
   const x = ri(2, 12);
   if (v === 1) {
     const a = ri(3, 25);
     return {
-      text: `x + ${a} = ${x + a}<br>¿Cuánto vale x?`, emoji: '🧩',
+      text: `x + ${a} = ${x + a}<br>¿Cuánto vale x?`, emoji: '🧩', img: 'piccolo',
       answer: String(x), options: numOptions(x, 4),
       note: `Resta ${a} de los dos lados`,
     };
@@ -211,8 +212,8 @@ function genEcuaciones() {
 }
 
 /* --- 6. Geometría --- */
-function genGeometria() {
-  const v = ri(1, 4);
+function genGeometria(v) {
+  v = v || ri(1, 4);
   if (v === 1) {
     const a = ri(4, 12), b = ri(3, 9);
     const ans = a * b;
@@ -251,55 +252,113 @@ function genGeometria() {
 }
 
 /* --- 7. Probabilidad --- */
-function genProbabilidad() {
-  const v = ri(1, 3);
+function genProbabilidad(v) {
+  v = v || ri(1, 3);
   if (v === 1) {
     const casos = pick([
       { q: 'un número PAR', n: 3 },
+      { q: 'un número IMPAR', n: 3 },
       { q: 'un número mayor que 4', n: 2 },
-      { q: 'el número 6', n: 1 },
+      { q: 'un número mayor que 2', n: 4 },
       { q: 'un número menor que 3', n: 2 },
+      { q: 'un número menor que 5', n: 4 },
+      { q: 'el número 6', n: 1 },
+      { q: 'el número 1', n: 1 },
+      { q: 'un 3 o un 4', n: 2 },
+      { q: 'un número del 1 al 6', n: 6 },
     ]);
     const ans = `${casos.n}/6`;
     return {
       text: `Lanzas un dado. ¿Cuál es la probabilidad de sacar ${casos.q}?`,
       emoji: '🎲', img: 'peely', answer: ans,
-      options: optSet(ans, [`${casos.n + 1}/6`, `${Math.max(1, casos.n - 1)}/6`, `${casos.n}/12`, `${casos.n + 2}/6`, '5/6']),
+      options: optSet(ans, [`${casos.n + 1 > 6 ? casos.n - 2 : casos.n + 1}/6`, `${Math.max(1, casos.n - 1)}/6`, `${casos.n}/12`, `${(casos.n + 2) > 6 ? 1 : casos.n + 2}/6`, '5/6', '0/6']),
       note: 'Probabilidad = casos favorables / casos posibles (6)',
     };
   }
   if (v === 2) {
+    const item = pick([
+      { a: 'esmeraldas', b: 'piedras', img: 'emerald' },
+      { a: 'diamantes', b: 'bloques de tierra', img: 'diamond' },
+      { a: 'pociones', b: 'manzanas', img: 'chugjug' },
+    ]);
     const esm = ri(2, 5), piedra = ri(3, 7);
     const total = esm + piedra;
     const ans = `${esm}/${total}`;
     return {
-      text: `En un cofre hay ${esm} esmeraldas y ${piedra} piedras. Sacas una sin ver. ¿Probabilidad de que sea esmeralda?`,
-      emoji: '💚', img: 'emerald', answer: ans,
+      text: `En un cofre hay ${esm} ${item.a} y ${piedra} ${item.b}. Sacas uno sin ver. ¿Probabilidad de que sea ${item.a.slice(0, -1)}a?`,
+      emoji: '💚', img: item.img, answer: ans,
       options: optSet(ans, [`${piedra}/${total}`, `${esm}/${piedra}`, `1/${total}`, `${esm + 1}/${total}`, `${esm}/${total + 1}`]),
       note: `Total de objetos: ${total}`,
     };
   }
-  const ans = '1/2';
+  const esc = pick([
+    { q: 'caiga águila', txt: 'Lanzas una moneda para ver quién escoge primero en Fortnite.', ans: '1/2', img: 'battlebus', w: ['1/4', '2/3', '1'] },
+    { q: 'una niña', txt: 'En un sorteo hay 5 niños y 5 niñas. Sacas un nombre al azar.', ans: '1/2', img: 'peely', w: ['1/5', '5/5', '2/5'] },
+    { q: 'roja', txt: 'Una ruleta tiene 4 partes iguales: 2 rojas y 2 azules. La giras.', ans: '1/2', img: 'estrella', w: ['1/4', '2/4', '3/4'] },
+    { q: 'corazones', txt: 'De una baraja sacas una carta. Hay 4 palos iguales y uno es corazones.', ans: '1/4', img: 'goku', w: ['1/2', '1/3', '4/4'] },
+  ]);
   return {
-    text: `Lanzas una moneda para ver quién escoge primero en Fortnite. ¿Probabilidad de que caiga águila?`,
-    emoji: '🪙', img: 'battlebus', answer: ans,
-    options: shuffle([ans, '1/4', '2/3', '1']),
-    note: 'Dos resultados posibles, uno favorable',
+    text: `${esc.txt} ¿Probabilidad de que salga ${esc.q}?`,
+    emoji: '🪙', img: esc.img, answer: esc.ans,
+    options: shuffle([esc.ans, ...esc.w]),
+    note: 'Casos favorables ÷ casos posibles',
   };
 }
 
+/* --- temas con sus lecciones --- */
 const MATH_TOPICS = [
-  { id: 'enteros', title: 'Números enteros', emoji: '🌡️', img: 'pickaxe', desc: 'Positivos y negativos', gen: genEnteros },
-  { id: 'fracciones', title: 'Fracciones', emoji: '🍕', img: 'reese', desc: 'Partes de un todo', gen: genFracciones },
-  { id: 'decimales', title: 'Decimales', emoji: '💰', img: 'vbucks', desc: 'Puntos y monedas', gen: genDecimales },
-  { id: 'porcentajes', title: 'Porcentajes', emoji: '📊', img: 'roshi', desc: 'Descuentos y puntería', gen: genPorcentajes },
-  { id: 'ecuaciones', title: 'Ecuaciones', emoji: '🧩', img: 'piccolo', desc: 'Encuentra el valor de x', gen: genEcuaciones },
-  { id: 'geometria', title: 'Geometría', emoji: '📐', img: 'grass', desc: 'Áreas, perímetros y volumen', gen: genGeometria },
-  { id: 'probabilidad', title: 'Probabilidad', emoji: '🎲', img: 'chest', desc: '¿Qué tan posible es?', gen: genProbabilidad },
+  { id: 'enteros', title: 'Números enteros', emoji: '🌡️', img: 'pickaxe', desc: 'Positivos y negativos', gen: genEnteros,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [1, 2] }, { t: '🌍 Misiones del multiverso', vs: [3, 4] }, { t: '🔥 Combo total', vs: [1, 2, 3, 4] }] },
+  { id: 'fracciones', title: 'Fracciones', emoji: '🍕', img: 'reese', desc: 'Partes de un todo', gen: genFracciones,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [1, 2] }, { t: '🌍 Misiones del multiverso', vs: [3, 4] }, { t: '🔥 Combo total', vs: [1, 2, 3, 4] }] },
+  { id: 'decimales', title: 'Decimales', emoji: '💰', img: 'vbucks', desc: 'Puntos y monedas', gen: genDecimales,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [2] }, { t: '🌍 Misiones del multiverso', vs: [1, 3] }, { t: '🔥 Combo total', vs: [1, 2, 3] }] },
+  { id: 'porcentajes', title: 'Porcentajes', emoji: '📊', img: 'roshi', desc: 'Descuentos y puntería', gen: genPorcentajes,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [1] }, { t: '🌍 Misiones del multiverso', vs: [2, 3] }, { t: '🔥 Combo total', vs: [1, 2, 3] }] },
+  { id: 'ecuaciones', title: 'Ecuaciones', emoji: '🧩', img: 'piccolo', desc: 'Encuentra el valor de x', gen: genEcuaciones,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [1, 2] }, { t: '🌍 Misiones del multiverso', vs: [3, 4] }, { t: '🔥 Combo total', vs: [1, 2, 3, 4] }] },
+  { id: 'geometria', title: 'Geometría', emoji: '📐', img: 'grass', desc: 'Áreas, perímetros y volumen', gen: genGeometria,
+    subs: [{ t: '⚡ Área y perímetro', vs: [1, 2] }, { t: '🌍 Misiones del multiverso', vs: [3, 4] }, { t: '🔥 Combo total', vs: [1, 2, 3, 4] }] },
+  { id: 'probabilidad', title: 'Probabilidad', emoji: '🎲', img: 'chest', desc: '¿Qué tan posible es?', gen: genProbabilidad,
+    subs: [{ t: '⚡ Entrenamiento básico', vs: [1, 3] }, { t: '🌍 Misiones del multiverso', vs: [2] }, { t: '🔥 Combo total', vs: [1, 2, 3] }] },
 ];
 
+/* V/F a partir de un problema "plano" (con campo plain/val) */
+function mathTF(t, vs) {
+  let guard = 0, q = null;
+  while (guard++ < 20) {
+    q = t.gen(pick(vs));
+    if (q.plain !== undefined) break;
+    q = null;
+  }
+  if (!q) return null;
+  const isTrue = Math.random() < 0.5;
+  const claim = isTrue ? q.val : q.val + pick([-3, -2, -1, 1, 2, 3]);
+  return tfQ(`${q.plain} = <b>${claim}</b>`, isTrue, { img: q.img, note: `${q.plain} = ${q.val}` });
+}
+
+function buildMathQuiz(t, vs, count) {
+  const qs = [];
+  const seen = new Set();
+  let guard = 0;
+  // 2 de V/F si el tema lo permite (variedad de formato)
+  for (let k = 0; k < 2; k++) {
+    const tf = mathTF(t, vs);
+    if (tf && !seen.has(tf.text)) { seen.add(tf.text); qs.push(tf); }
+  }
+  while (qs.length < count && guard++ < 120) {
+    const q = t.gen(pick(vs));
+    if (seen.has(q.text)) continue;
+    seen.add(q.text);
+    q.type = 'mc';
+    q.img = q.img || t.img;
+    qs.push(q);
+  }
+  return shuffle(qs);
+}
+
 function mathProgress() {
-  const done = MATH_TOPICS.filter(t => S.math[t.id] && S.math[t.id].done).length;
+  const done = MATH_TOPICS.filter(t => unitState(S.math, t.id).examDone).length;
   return { done, total: MATH_TOPICS.length };
 }
 
@@ -310,60 +369,110 @@ function showMathHome() {
   app.innerHTML = `
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">🐉 Torre de Entrenamiento Z: Matemáticas</h1>
-    <p class="screen-sub">Domina cada tema (8 de 10 aciertos) para ganar una esfera del dragón. ¡Junta las 7 e invoca a Shenlong!</p>
+    <p class="screen-sub">3 lecciones por tema y un examen final. Aprueba el examen y gana la esfera. ¡Junta las 7 e invoca a Shenlong!</p>
     ${imgTag(allDone ? 'shenron' : 'esfera', 'scene-banner', 'Esferas del dragón')}
     <div class="collection">
       <span class="c-label">🔮 ESFERAS DEL DRAGÓN (${p.done}/7)</span>
       ${MATH_TOPICS.map((t) => {
-        const done = S.math[t.id] && S.math[t.id].done;
+        const done = unitState(S.math, t.id).examDone;
         return `<span class="c-item" title="${esc(t.title)}">${imgTag('esfera_bola', 'status-img' + (done ? '' : ' gray'), t.title)}</span>`;
       }).join('')}
       ${allDone ? '<span class="c-item">✨</span>' : ''}
     </div>
-    ${allDone ? `<div class="reward-banner"><span class="r-emoji">🐉</span>¡SHENLONG HA SIDO INVOCADO! Dominaste las matemáticas de tu grado. Sigue entrenando para mantener tu poder.</div>` : ''}
-    <p class="muted" style="font-size:.85rem;margin-top:8px">📏 Reglas: cada misión tiene 10 problemas. Necesitas <b>8 aciertos</b> para ganar la esfera 🟠. Si fallas, la app te explica cómo se resolvía. Puedes reintentar las veces que quieras.</p>
+    ${allDone ? `<div class="reward-banner"><span class="r-emoji">🐉</span>¡SHENLONG HA SIDO INVOCADO! Dominaste las matemáticas de tu grado.</div>` : ''}
     <div class="spacer"></div>
     ${MATH_TOPICS.map((t, idx) => {
-      const st = S.math[t.id] || {};
+      const st = unitState(S.math, t.id);
+      const subsOk = [0, 1, 2].filter(i => subIsDone(st, i)).length;
       return `
         <button class="item-card" data-topic="${idx}">
           ${imgTag(t.img, 'item-img', t.title)}
           <span class="item-body">
             <span class="item-title">${esc(t.title)}</span>
-            <span class="item-sub">${esc(t.desc)}${st.best ? ` · Mejor: ${st.best}/10` : ''}</span>
+            <span class="item-sub">${st.examDone ? '✅ Examen aprobado' : `📖 ${subsOk}/3 lecciones${allSubsDone(st, 3) ? ' · ¡examen listo!' : ''}`}</span>
           </span>
-          <span class="item-status">${imgTag('esfera_bola', 'status-img' + (st.done ? '' : ' gray'), 'esfera')}</span>
+          <span class="item-status">${imgTag('esfera_bola', 'status-img' + (st.examDone ? '' : ' gray'), 'esfera')}</span>
         </button>`;
     }).join('')}
     <p class="center muted" style="margin-top:10px">♾️ Los problemas cambian cada vez: puedes entrenar sin límite.</p>
   `;
   $('#back').addEventListener('click', showHome);
   app.querySelectorAll('[data-topic]').forEach(b =>
-    b.addEventListener('click', () => startMathQuiz(+b.dataset.topic)));
+    b.addEventListener('click', () => showMathTopic(+b.dataset.topic)));
 }
 
-function startMathQuiz(idx) {
+function showMathTopic(idx) {
   const t = MATH_TOPICS[idx];
-  const qs = [];
-  const seen = new Set();
-  let guard = 0;
-  while (qs.length < 10 && guard++ < 80) {
-    const q = t.gen();
-    if (seen.has(q.text)) continue; // evitar repetidas en la misma ronda
-    seen.add(q.text);
-    q.type = 'mc';
-    q.img = q.img || t.img; // toda pregunta lleva su motivador visual
-    qs.push(q);
-  }
+  const st = unitState(S.math, t.id);
+  const examReady = allSubsDone(st, 3);
+  const app = $('#app');
+  app.innerHTML = `
+    <button class="back-link" id="back">← Torre Z</button>
+    <h1 class="screen-title">${esc(t.title)}</h1>
+    <p class="screen-sub">${esc(t.desc)}</p>
+    ${t.subs.map((sub, i) => {
+      const done = subIsDone(st, i);
+      const locked = i > 0 && !subIsDone(st, i - 1) && !done;
+      return `
+        <button class="item-card" data-sub="${i}" ${locked ? 'disabled' : ''}>
+          <span class="item-emoji">${locked ? '🔒' : (done ? '✅' : '📖')}</span>
+          <span class="item-body">
+            <span class="item-title">Lección ${i + 1}: ${esc(sub.t)}</span>
+            <span class="item-sub">10 problemas · acierta 8 para dominarla</span>
+          </span>
+          <span class="item-status">${done ? '⭐' : (locked ? '' : '▶️')}</span>
+        </button>`;
+    }).join('')}
+    <button class="item-card exam-card" id="go-exam" ${examReady ? '' : 'disabled'}>
+      ${imgTag('esfera_bola', 'item-img', 'esfera')}
+      <span class="item-body">
+        <span class="item-title">🏆 EXAMEN FINAL</span>
+        <span class="item-sub">${examReady
+          ? (st.examDone ? `Aprobado · Mejor: ${st.examBest}/12 · Intentos: ${st.examTries}` : `12 problemas de todo el tema${st.examTries ? ` · Intentos: ${st.examTries}` : ''}`)
+          : 'Completa las 3 lecciones para desbloquearlo'}</span>
+      </span>
+      <span class="item-status">${st.examDone ? '🏆' : (examReady ? '🔥' : '🔒')}</span>
+    </button>
+  `;
+  $('#back').addEventListener('click', showMathHome);
+  app.querySelectorAll('[data-sub]').forEach(b =>
+    b.addEventListener('click', () => startMathLesson(idx, +b.dataset.sub)));
+  $('#go-exam').addEventListener('click', () => startMathExam(idx));
+}
+
+function startMathLesson(idx, subIdx) {
+  const t = MATH_TOPICS[idx];
   startQuiz({
-    qs,
-    onBack: showMathHome,
+    qs: buildMathQuiz(t, t.subs[subIdx].vs, 10),
+    onBack: () => showMathTopic(idx),
     onDone: (score, total, passed) => {
-      const st = S.math[t.id] || { best: 0, done: false };
-      st.best = Math.max(st.best || 0, score);
-      const firstTime = passed && !st.done;
-      if (passed) st.done = true;
-      S.math[t.id] = st;
+      if (passed) {
+        const st = unitState(S.math, t.id);
+        st.subDone[subIdx] = true;
+        save();
+        const slot = $('#reward-slot');
+        if (slot && allSubsDone(st, 3) && !st.examDone) {
+          slot.innerHTML = `<div class="reward-banner">🔥 ¡Las 3 lecciones dominadas! El EXAMEN FINAL te espera para ganar la esfera.</div>`;
+        }
+      }
+    },
+  });
+}
+
+function startMathExam(idx) {
+  const t = MATH_TOPICS[idx];
+  const st = unitState(S.math, t.id);
+  st.examTries++;
+  save();
+  const allVs = t.subs[t.subs.length - 1].vs;
+  startQuiz({
+    qs: buildMathQuiz(t, allVs, 12),
+    isExam: true,
+    onBack: () => showMathTopic(idx),
+    onDone: (score, total, passed) => {
+      st.examBest = Math.max(st.examBest || 0, score);
+      const firstTime = passed && !st.examDone;
+      if (passed) st.examDone = true;
       save();
       if (firstTime) {
         addXP(50);
@@ -377,6 +486,7 @@ function startMathQuiz(idx) {
               ${p.done === 7 ? '<br>🐉 ¡¡JUNTASTE LAS 7!! SHENLONG TE ESPERA EN LA TORRE.' : ''}
             </div>`;
         }
+        checkCoupons();
       }
     },
   });

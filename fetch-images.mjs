@@ -1,74 +1,65 @@
-// Buscador de imágenes en wikis de franquicias (uso interno)
+// Buscador+descargador de imágenes en wikis de franquicias (uso interno)
+// Uso: node fetch-images.mjs
+import fs from 'fs';
+
 const targets = [
-  // Dragon Ball
-  ['https://dragonball.fandom.com', 'Vegeta', 'vegeta'],
-  ['https://dragonball.fandom.com', 'Piccolo', 'piccolo'],
-  ['https://dragonball.fandom.com', 'Gohan', 'gohan'],
-  ['https://dragonball.fandom.com', 'Bulma', 'bulma'],
-  ['https://dragonball.fandom.com', 'Master Roshi', 'roshi'],
-  // Jurassic Park
-  ['https://jurassicpark.fandom.com', 'Mr. DNA', 'mrdna'],
-  ['https://jurassicpark.fandom.com', 'Blue', 'blue'],
-  ['https://jurassicpark.fandom.com', 'Mosasaurus', 'mosasaurus'],
-  ['https://jurassicpark.fandom.com', 'Triceratops', 'triceratops'],
-  ['https://jurassicpark.fandom.com', 'Brachiosaurus', 'brachiosaurus'],
-  ['https://jurassicpark.fandom.com', 'Dilophosaurus', 'dilophosaurus'],
-  ['https://jurassicpark.fandom.com', 'Spinosaurus', 'spinosaurus'],
-  ['https://jurassicpark.fandom.com', 'Stegosaurus', 'stegosaurus'],
-  ['https://jurassicpark.fandom.com', 'Pteranodon', 'pteranodon'],
-  ['https://jurassicpark.fandom.com', 'Ankylosaurus', 'ankylosaurus'],
-  ['https://jurassicpark.fandom.com', 'Indominus rex', 'indominus'],
-  ['https://jurassicpark.fandom.com', 'Compsognathus', 'compy'],
-  // Malcolm
-  ['https://malcolminthemiddle.fandom.com', 'Reese Wilkerson', 'reese'],
-  ['https://malcolminthemiddle.fandom.com', 'Dewey Wilkerson', 'dewey'],
-  ['https://malcolminthemiddle.fandom.com', 'Hal Wilkerson', 'hal'],
-  ['https://malcolminthemiddle.fandom.com', 'Lois Wilkerson', 'lois'],
-  ['https://malcolminthemiddle.fandom.com', 'Francis Wilkerson', 'francis'],
-  // Minecraft
-  ['https://minecraft.wiki', 'Zombie', 'zombie'],
-  ['https://minecraft.wiki', 'Skeleton', 'skeleton'],
-  ['https://minecraft.wiki', 'Enderman', 'enderman'],
-  ['https://minecraft.wiki', 'Pig', 'pig'],
-  ['https://minecraft.wiki', 'Cow', 'cow'],
-  ['https://minecraft.wiki', 'Chicken', 'mc_chicken'],
-  ['https://minecraft.wiki', 'Wolf', 'wolf'],
-  ['https://minecraft.wiki', 'Spider', 'spider'],
-  ['https://minecraft.wiki', 'Horse', 'horse'],
-  ['https://minecraft.wiki', 'Emerald', 'emerald'],
-  ['https://minecraft.wiki', 'Gold Ingot', 'gold'],
-  ['https://minecraft.wiki', 'Chest', 'chest'],
-  ['https://minecraft.wiki', 'Cake', 'mc_cake'],
-  ['https://minecraft.wiki', 'Apple', 'mc_apple'],
-  ['https://minecraft.wiki', 'Bread', 'mc_bread'],
-  ['https://minecraft.wiki', 'Egg', 'mc_egg'],
-  ['https://minecraft.wiki', 'Milk Bucket', 'mc_milk'],
-  ['https://minecraft.wiki', 'Water Bucket', 'mc_water'],
-  ['https://minecraft.wiki', 'Cookie', 'mc_cookie'],
-  ['https://minecraft.wiki', 'Bed', 'mc_bed'],
-  ['https://minecraft.wiki', 'Pickaxe', 'pickaxe'],
-  // Fortnite
-  ['https://fortnite.fandom.com', 'Peely', 'peely'],
-  ['https://fortnite.fandom.com', 'Battle Bus', 'battlebus'],
-  ['https://fortnite.fandom.com', 'Chug Jug', 'chugjug'],
-  ['https://fortnite.fandom.com', 'Boogie Bomb', 'boogie'],
+  // Bill & Ted
+  ['https://billandted.fandom.com', 'Bill S. Preston', 'bill'],
+  ['https://billandted.fandom.com', 'Ted Logan', 'ted'],
+  ['https://billandted.fandom.com', 'Phone Booth', 'cabina'],
+  // Star Wars (precuelas)
+  ['https://starwars.fandom.com', 'Anakin Skywalker', 'anakin'],
+  ['https://starwars.fandom.com', 'Obi-Wan Kenobi', 'obiwan'],
+  ['https://starwars.fandom.com', 'Darth Maul', 'maul'],
+  ['https://starwars.fandom.com', 'Yoda', 'yoda'],
+  ['https://starwars.fandom.com', 'R2-D2', 'r2d2'],
+  ['https://starwars.fandom.com', 'Padmé Amidala', 'padme'],
+  // Mario Bros
+  ['https://mario.fandom.com', 'Mario', 'mario'],
+  ['https://mario.fandom.com', 'Luigi', 'luigi'],
+  ['https://mario.fandom.com', 'Bowser', 'bowser'],
+  ['https://mario.fandom.com', 'Princess Peach', 'peach'],
+  ['https://mario.fandom.com', 'Yoshi', 'yoshi'],
+  ['https://mario.fandom.com', 'Goomba', 'goomba'],
+  ['https://mario.fandom.com', 'Super Star', 'estrella'],
+  ['https://mario.fandom.com', 'Super Mushroom', 'hongo'],
+  // How to Train Your Dragon
+  ['https://howtotrainyourdragon.fandom.com', 'Toothless', 'chimuelo'],
+  ['https://howtotrainyourdragon.fandom.com', 'Hiccup Horrendous Haddock III', 'hipo'],
+  // Cars / Toy Story (Pixar)
+  ['https://pixar.fandom.com', 'Lightning McQueen', 'mcqueen'],
+  ['https://pixar.fandom.com', 'Mater', 'mate_cars'],
+  ['https://pixar.fandom.com', 'Woody', 'woody'],
+  ['https://pixar.fandom.com', 'Buzz Lightyear', 'buzz'],
+  ['https://pixar.fandom.com', 'Rex', 'rex_ts'],
+  // One Piece
+  ['https://onepiece.fandom.com', 'Monkey D. Luffy', 'luffy'],
+  ['https://onepiece.fandom.com', 'Roronoa Zoro', 'zoro'],
+  ['https://onepiece.fandom.com', 'Tony Tony Chopper', 'chopper'],
+  ['https://onepiece.fandom.com', 'Going Merry', 'merry'],
 ];
 
-const out = [];
+function extFor(buf) {
+  if (buf[0] === 0x89 && buf[1] === 0x50) return 'png';
+  if (buf[0] === 0x52 && buf[1] === 0x49) return 'webp';
+  if (buf[0] === 0xFF && buf[1] === 0xD8) return 'jpg';
+  if (buf[0] === 0x47 && buf[1] === 0x49) return 'gif';
+  return null;
+}
+
 for (const [base, title, name] of targets) {
   try {
-    const url = base + '/api.php?action=query&prop=pageimages&piprop=thumbnail&pithumbsize=400&redirects=1&format=json&titles=' + encodeURIComponent(title);
-    const r = await fetch(url, { headers: { 'User-Agent': 'personal-edu-app/1.0' } });
+    const api = base + '/api.php?action=query&prop=pageimages&piprop=thumbnail&pithumbsize=400&redirects=1&format=json&titles=' + encodeURIComponent(title);
+    const r = await fetch(api, { headers: { 'User-Agent': 'personal-edu-app/1.0' } });
     const j = await r.json();
     const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
     const thumb = pages[0] && pages[0].thumbnail && pages[0].thumbnail.source;
-    console.log(name + '\t' + (thumb || 'NO_IMAGE'));
-  } catch (e) { console.log(name + '\tERROR'); }
+    if (!thumb) { console.log(name + '\tNO_IMAGE (' + title + ')'); continue; }
+    const ir = await fetch(thumb, { headers: { 'User-Agent': 'personal-edu-app/1.0' } });
+    const buf = Buffer.from(await ir.arrayBuffer());
+    const ext = extFor(buf);
+    if (!ext || buf.length < 200) { console.log(name + '\tFALLO_DESCARGA'); continue; }
+    fs.writeFileSync('assets/img/' + name + '.' + ext, buf);
+    console.log(name + '.' + ext + '\tOK ' + Math.round(buf.length / 1024) + 'KB');
+  } catch (e) { console.log(name + '\tERROR ' + e.message); }
 }
-
-// esfera individual: buscar en el namespace de archivos
-try {
-  const r = await fetch('https://dragonball.fandom.com/api.php?action=query&list=search&srnamespace=6&srlimit=8&format=json&srsearch=' + encodeURIComponent('four star dragon ball'), { headers: { 'User-Agent': 'personal-edu-app/1.0' } });
-  const j = await r.json();
-  for (const hit of (j.query.search || [])) console.log('FILE_CANDIDATE\t' + hit.title);
-} catch (e) { console.log('search ERROR'); }

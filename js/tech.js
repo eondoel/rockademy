@@ -339,6 +339,7 @@ function showRobotLevel(idx) {
       S.robot[idx] = true;
       save();
       addXP(firstTime ? 40 : 10);
+      if (firstTime && ROBOT_LEVELS.every((_, k) => S.robot[k])) checkCoupons();
       const hasNext = idx + 1 < ROBOT_LEVELS.length;
       draw('💎 ¡DIAMANTE CONSEGUIDO!', 'ok');
       showModal(`
@@ -363,150 +364,167 @@ function showRobotLevel(idx) {
   draw();
 }
 
-/* ---------- Academia Claude ---------- */
+
+/* ================= COMPU-LAB 🔌 =================
+   ¿Cómo piensa una computadora? Binario, algoritmos y hardware,
+   aprendido por asociación y con las manos. */
+
+const COMPLAB_SUBS = [
+  { t: '💡 El idioma de los focos (binario)', build: buildBinaryLesson },
+  { t: '📜 Recetas para robots (algoritmos)', build: buildAlgoLesson },
+  { t: '🧠 Las piezas de la bestia (hardware)', build: buildHardwareLesson },
+];
+
+function buildBinaryLesson() {
+  return [
+    { type: 'info', img: 'r2d2', text: 'Las computadoras solo entienden DOS cosas:<br><b>prendido (1)</b> y <b>apagado (0)</b>.<br>Como focos. 💡⚫<br><br>Tus fotos, Minecraft, la música… TODO son millones de foquitos prendidos y apagados.' },
+    { type: 'info', img: 'steve', text: 'Cada foco vale el DOBLE que el anterior:<br><b style="font-size:1.4rem">8 · 4 · 2 · 1</b><br><br>Para formar un número, enciendes los focos que SUMEN ese número.<br>¡Eso es el BINARIO!' },
+    { type: 'bits', target: 5 },
+    { type: 'bits', target: 3 },
+    { type: 'mc', img: 'bulma', text: 'Si los focos están así: 💡⚫💡⚫ (8-4-2-1)<br>¿qué número forman?', options: ['10', '12', '5', '8'], answer: '10', note: '8 + 2 = 10' },
+    { type: 'bits', target: 10 },
+    tfQ('Con los focos 8-4-2-1 puedes formar el número 15 encendiendo TODOS', true, { img: 'r2d2', note: '8+4+2+1 = 15' }),
+    { type: 'bits', target: 13 },
+    { type: 'mc', img: 'vbucks', text: '¿Por qué las compus usan binario?', options: ['Porque sus circuitos solo tienen prendido y apagado', 'Porque es más bonito', 'Porque no saben contar hasta 10', 'Por tradición'], answer: 'Porque sus circuitos solo tienen prendido y apagado' },
+    { type: 'bits', target: 7 },
+  ];
+}
+
+function buildAlgoLesson() {
+  return [
+    { type: 'info', img: 'steve', text: 'Un <b>ALGORITMO</b> es una RECETA:<br>pasos en orden para lograr algo.<br><br>Las compus siguen recetas al pie de la letra, sin imaginación y sin saltarse nada.' },
+    { type: 'info', img: 'mc_bread', text: 'Si la receta está en desorden… ¡DESASTRE! 🤯<br><br>Primero el pan, LUEGO la Nutella y al final muerdes.<br>Ordenar pasos = programar.' },
+    { type: 'order', img: 'mc_bread', text: '🥪 Ordena el algoritmo del sándwich de Nutella:', tokens: ['Saca el pan', 'Úntale Nutella', 'Junta las tapas', '¡Muérdelo!'] },
+    tfQ('En un algoritmo, el orden de los pasos no importa', false, { img: 'steve', note: 'El orden lo es TODO' }),
+    { type: 'order', img: 'diamond', text: '⚔️ Ordena el algoritmo para craftear una espada:', tokens: ['Consigue madera y diamantes', 'Haz una mesa de crafteo', 'Acomoda el material', 'Craftea la espada'] },
+    { type: 'mc', img: 'mrdna', text: '¿Qué es un algoritmo?', options: ['Una receta de pasos en orden', 'Un tipo de robot', 'Un lenguaje secreto', 'Una marca de computadora'], answer: 'Una receta de pasos en orden' },
+    { type: 'order', img: 'mc_bed', text: '🌅 Ordena tu algoritmo de la mañana:', tokens: ['Suena la alarma', 'Te levantas', 'Te vistes', 'Vas a la escuela'] },
+    tfQ('Los robots y las compus adivinan lo que quieres aunque te saltes pasos', false, { img: 'r2d2' }),
+    { type: 'order', text: '🦷 Ordena el algoritmo de lavarte los dientes:', tokens: ['Pon pasta en el cepillo', 'Cepilla 2 minutos', 'Enjuaga tu boca', 'Sonríe al espejo'] },
+    { type: 'mc', img: 'goomba', text: 'Si un paso de la receta está mal, la computadora…', options: ['Lo ejecuta mal tal cual, sin avisar', 'Lo corrige sola', 'Te pregunta qué querías', 'Se apaga'], answer: 'Lo ejecuta mal tal cual, sin avisar', note: 'Por eso los programadores revisan paso por paso' },
+  ];
+}
+
+function buildHardwareLesson() {
+  return [
+    { type: 'info', img: 'bulma', text: 'Una compu es como un CUERPO:<br>🧠 el <b>CPU</b> es el cerebro que piensa<br>📝 la <b>RAM</b> es la mesa de trabajo<br>📦 el <b>disco</b> es el baúl que guarda todo' },
+    { type: 'info', img: 'creeper', text: '<b>Hardware</b> = lo que puedes TOCAR (teclado, pantalla).<br><b>Software</b> = los programas (Minecraft, esta app).<br><br>El software vive dentro del hardware, como tú dentro de tu casa.' },
+    { type: 'match', text: '🔗 Une cada pieza con lo que hace', pairs: [['CPU', 'El cerebro que piensa'], ['RAM', 'La mesa de trabajo'], ['Disco duro', 'El baúl que guarda todo'], ['Pantalla', 'Muestra lo que pasa']] },
+    { type: 'mc', img: 'steve', text: '¿Cuál de estas cosas es HARDWARE?', options: ['El teclado', 'Minecraft', 'Un video de YouTube', 'Una canción'], answer: 'El teclado' },
+    { type: 'mc', img: 'creeper', text: '¿Cuál de estas cosas es SOFTWARE?', options: ['Minecraft', 'El ratón', 'La pantalla', 'Los cables'], answer: 'Minecraft' },
+    tfQ('El software se puede tocar con las manos', false, { img: 'mrdna', note: 'Los programas son como ideas: no se tocan' }),
+    { type: 'mc', img: 'chest', text: '¿Dónde se guardan tus mundos de Minecraft cuando apagas la compu?', options: ['En el disco duro', 'En la RAM', 'En la pantalla', 'En el teclado'], answer: 'En el disco duro' },
+    { type: 'match', text: '🔗 Une cada aparato con su trabajo', pairs: [['Teclado', 'Para escribir'], ['Ratón', 'Para apuntar'], ['Bocinas', 'Para escuchar'], ['Micrófono', 'Para hablar']] },
+    tfQ('La RAM recuerda todo aunque apagues la computadora', false, { img: 'bulma', note: 'La RAM se borra al apagar; el disco sí recuerda' }),
+  ];
+}
+
+function buildComplabExam() {
+  const qs = [];
+  qs.push({ type: 'bits', target: ri(3, 15) });
+  qs.push({ type: 'bits', target: ri(3, 15) });
+  const orders = [
+    { type: 'order', text: '🥪 Ordena el algoritmo del sándwich:', tokens: ['Saca el pan', 'Úntale Nutella', 'Junta las tapas', '¡Muérdelo!'] },
+    { type: 'order', text: '⚔️ Ordena el crafteo de la espada:', tokens: ['Consigue madera y diamantes', 'Haz una mesa de crafteo', 'Acomoda el material', 'Craftea la espada'] },
+  ];
+  qs.push(pick(orders));
+  qs.push({ type: 'match', text: '🔗 Une cada pieza con lo que hace', pairs: [['CPU', 'El cerebro que piensa'], ['RAM', 'La mesa de trabajo'], ['Disco duro', 'El baúl que guarda todo'], ['Pantalla', 'Muestra lo que pasa']] });
+  const mcs = shuffle([
+    { type: 'mc', img: 'r2d2', text: 'Las computadoras, en el fondo, solo entienden…', options: ['Unos y ceros', 'Español', 'Inglés', 'Emojis'], answer: 'Unos y ceros' },
+    { type: 'mc', img: 'mrdna', text: '¿Qué es un algoritmo?', options: ['Una receta de pasos en orden', 'Un virus', 'Una pieza de la compu', 'Un videojuego'], answer: 'Una receta de pasos en orden' },
+    { type: 'mc', img: 'steve', text: '¿Cuál es el "cerebro" de la computadora?', options: ['El CPU', 'La pantalla', 'El teclado', 'El cable'], answer: 'El CPU' },
+    { type: 'mc', img: 'chest', text: 'Para que algo se guarde aunque apagues la compu, debe estar en…', options: ['El disco duro', 'La RAM', 'La pantalla', 'El aire'], answer: 'El disco duro' },
+    tfQ('Con los focos 8-4-2-1, el número 9 se forma con 💡⚫⚫💡', true, { note: '8 + 1 = 9' }),
+    tfQ('Minecraft es hardware', false, { img: 'creeper', note: 'Es software: un programa' }),
+    tfQ('El orden de los pasos en un algoritmo no importa', false),
+    { type: 'mc', img: 'bulma', text: '¿Cuánto vale 💡💡⚫⚫ (8-4-2-1)?', options: ['12', '10', '3', '14'], answer: '12', note: '8 + 4 = 12' },
+  ]).slice(0, 8);
+  return shuffle(qs.concat(mcs));
+}
+
+/* ================= ACADEMIA CLAUDE ✨ =================
+   Poco texto, asociaciones y práctica inmediata. */
+
 const CLAUDE_LESSONS = [
   {
-    id: 'que-es', title: '¿Qué es Claude?', emoji: '🤔',
-    body: `
-      <h2>🤔 ¿Qué es Claude?</h2>
-      <p><b>Claude es una inteligencia artificial (IA)</b>: un programa de computadora que aprendió leyendo muchísimos textos, y con el que puedes <b>platicar escribiendo</b>, como si fuera un chat.</p>
-      <ul>
-        <li>Es como un <b>bibliotecario súper rápido</b> que leyó millones de libros.</li>
-        <li>Le puedes pedir que te <b>explique cosas, te ayude con la tarea, invente cuentos</b> o hasta que te haga exámenes de práctica.</li>
-        <li>No es magia ni una persona: es un programa que <b>predice qué palabras van después</b>, ¡pero lo hace tan bien que parece que piensa!</li>
-      </ul>
-      <p>💡 Dato curioso: esta app que estás usando… <b>fue construida con ayuda de Claude</b>. Así de poderosa es esta herramienta cuando aprendes a usarla.</p>`,
+    id: 'que-es', title: '¿Qué es Claude?', emoji: '🤖',
+    build: () => [
+      { type: 'info', img: 'mrdna', text: '<b>Claude es una INTELIGENCIA ARTIFICIAL.</b><br><br>Un programa con el que platicas escribiendo… como chatear con un amigo que se leyó millones de libros. 📚' },
+      { type: 'info', img: 'steve', text: '¿Cómo aprendió?<br><br>Como tú en Minecraft: pico y pala MILLONES de veces. ⛏️<br>Claude "entrenó" leyendo textos hasta aprender a responder.' },
+      tfQ('Claude es una persona real contestando mensajes', false, { img: 'mrdna', note: 'Es un programa de computadora' }),
+      { type: 'mc', img: 'goku', text: '¿Qué puede hacer Claude por ti?', options: ['Explicarte la tarea, inventar cuentos y hacerte quizzes', 'Hacer tu cama', 'Jugar Fortnite contigo', 'Cocinar pizza'], answer: 'Explicarte la tarea, inventar cuentos y hacerte quizzes' },
+      tfQ('Claude aprendió leyendo muchísimos textos', true),
+      { type: 'info', img: 'creeper', text: 'Claude no es magia: es buenísimo adivinando qué palabras siguen.<br><br>Dato curioso: <b>esta app fue construida con ayuda de Claude</b>. 🤯' },
+      tfQ('Esta app fue construida con ayuda de una IA', true, { img: 'mrdna' }),
+      { type: 'mc', img: 'r2d2', text: 'Claude se parece más a…', options: ['Un bibliotecario súper rápido', 'Un robot que camina', 'Una consola de videojuegos', 'Un teléfono'], answer: 'Un bibliotecario súper rápido' },
+    ],
   },
   {
-    id: 'prompt', title: 'El prompt perfecto', emoji: '✍️',
-    body: `
-      <h2>✍️ El prompt perfecto</h2>
-      <p>Un <b>"prompt"</b> es el mensaje que le escribes a Claude. La calidad de la respuesta depende de la calidad de tu prompt. Regla de oro: <b>pídelo como si le explicaras a un amigo nuevo exactamente qué necesitas</b>.</p>
-      <p>Los 3 secretos:</p>
-      <ul>
-        <li><b>1. Sé específico</b> — di exactamente qué quieres.</li>
-        <li><b>2. Da contexto</b> — di quién eres o para qué lo necesitas.</li>
-        <li><b>3. Pide el formato</b> — ¿lista? ¿5 puntos? ¿corto? ¿con ejemplos?</li>
-      </ul>
-      <div class="ejemplo malo">❌ <b>Prompt flojo:</b> "dinosaurios"</div>
-      <div class="ejemplo bueno">✅ <b>Prompt poderoso:</b> "Tengo 13 años y me encanta Jurassic Park. Explícame en 5 puntos sencillos por qué se extinguieron los dinosaurios."</div>
-      <p>¿Ves la diferencia? El segundo le dice <b>quién eres</b>, <b>qué quieres</b> y <b>cómo lo quieres</b>.</p>`,
+    id: 'prompt', title: 'El deseo perfecto (prompts)', emoji: '🐉',
+    build: () => [
+      { type: 'info', img: 'shenron', text: 'Pedirle algo a Claude es como pedirle un deseo a <b>SHENLONG</b>:<br><br>si pides mal… ¡el deseo sale raro! 😅<br>Tu mensaje se llama <b>PROMPT</b>.' },
+      { type: 'info', img: 'esfera_bola', text: 'Los 3 secretos del deseo perfecto:<br><br>1️⃣ Di EXACTAMENTE qué quieres<br>2️⃣ Cuenta quién eres (contexto)<br>3️⃣ Pide el formato (lista, 5 puntos, fácil…)' },
+      { type: 'mc', img: 'trex', text: 'Para tu tarea de dinosaurios, ¿cuál deseo está mejor pedido?', options: ['"Tengo 13 años: explícame en 5 puntos fáciles por qué se extinguieron los dinosaurios"', '"dinosaurios"', '"haz mi tarea"', '"dime todo"'], answer: '"Tengo 13 años: explícame en 5 puntos fáciles por qué se extinguieron los dinosaurios"' },
+      { type: 'mc', img: 'shenron', text: '¿Qué es un "prompt"?', options: ['El mensaje que le escribes a la IA', 'Un botón del teclado', 'Un virus', 'El nombre del creador'], answer: 'El mensaje que le escribes a la IA' },
+      tfQ('"dinosaurios" es un buen prompt', false, { img: 'trex', note: 'Demasiado vago: dile qué, para qué y cómo' }),
+      { type: 'mc', img: 'grass', text: 'Quieres ayuda para construir en Minecraft. ¿Cuál prompt es mejor?', options: ['"Dame pasos para construir un castillo medieval pequeño en Minecraft survival"', '"minecraft"', '"castillo"', '"ayúdame"'], answer: '"Dame pasos para construir un castillo medieval pequeño en Minecraft survival"' },
+      tfQ('Si pides "explícamelo fácil, tengo 13 años", la respuesta será más clara', true, { img: 'mrdna' }),
+    ],
   },
   {
-    id: 'cuidado', title: 'Cuidado: la IA se equivoca', emoji: '⚠️',
-    body: `
-      <h2>⚠️ La IA también se equivoca</h2>
-      <p>Claude es muy listo, pero <b>no es perfecto</b>. A veces se equivoca con mucha seguridad (a eso le dicen "alucinar"). Por eso:</p>
-      <ul>
-        <li>🔍 <b>Verifica los datos importantes</b> — si es para la escuela, compara con tu libro o pregúntale a un adulto.</li>
-        <li>🔒 <b>Nunca compartas datos personales</b>: tu dirección, escuela, contraseñas o fotos.</li>
-        <li>🧠 <b>Úsalo para APRENDER, no para copiar</b>: si Claude hace tu tarea por ti, el que no aprende eres tú. Mejor pídele que te EXPLIQUE cómo se hace.</li>
-        <li>🗣️ Si algo te confunde o incomoda, <b>cuéntale a tu papá o mamá</b>.</li>
-      </ul>
-      <p>Un buen gamer conoce las debilidades de sus herramientas. 🎮</p>`,
+    id: 'cuidado', title: 'La IA también falla', emoji: '⚠️',
+    build: () => [
+      { type: 'info', img: 'tnt', text: 'Claude a veces se equivoca MUY seguro de sí mismo.<br>(A eso le dicen <b>"alucinar"</b>.)<br><br>Es como un mapa glitcheado: se ve bien… pero te manda a la lava. 🌋' },
+      { type: 'info', img: 'creeper', text: 'Reglas de supervivencia:<br><br>🔍 Verifica los datos importantes en tu libro o con papá<br>🔒 NUNCA compartas contraseñas, dirección o fotos<br>🧠 Úsalo para APRENDER, no para copiar' },
+      tfQ('La IA nunca se equivoca', false, { img: 'tnt', note: 'Se equivoca con mucha confianza: verifica' }),
+      { type: 'mc', img: 'mrdna', text: 'Claude te da un dato para tu examen. ¿Qué haces?', options: ['Lo verifico en mi libro o con un adulto', 'Lo copio sin leer', 'Lo publico en internet', 'Lo tatúo'], answer: 'Lo verifico en mi libro o con un adulto' },
+      { type: 'mc', img: 'creeper', text: '¿Qué NO debes compartir con una IA?', options: ['Contraseñas, dirección y datos personales', 'Tus dudas de mate', 'Preguntas de Minecraft', 'Lo que quieres aprender'], answer: 'Contraseñas, dirección y datos personales' },
+      tfQ('Dejar que la IA haga tu tarea te ayuda a aprender más', false, { note: 'El que no aprende eres tú: pídele que te EXPLIQUE' }),
+      { type: 'mc', img: 'malcolm', text: 'Si algo de la conversación te confunde o incomoda…', options: ['Se lo cuento a papá o mamá', 'Lo ignoro para siempre', 'Sigo como si nada', 'Apago la compu asustado'], answer: 'Se lo cuento a papá o mamá' },
+    ],
   },
   {
     id: 'trucos', title: 'Trucos de nivel pro', emoji: '🥋',
-    body: `
-      <h2>🥋 Trucos de nivel pro</h2>
-      <p>Frases mágicas que mejoran cualquier respuesta:</p>
-      <ul>
-        <li>🗣️ <b>"Explícamelo como si tuviera 13 años"</b> — respuestas claras, sin palabras raras.</li>
-        <li>🌰 <b>"Dame un ejemplo"</b> — todo se entiende mejor con ejemplos.</li>
-        <li>❓ <b>"Hazme preguntas para ver si entendí"</b> — ¡Claude puede ser tu examinador!</li>
-        <li>🔁 <b>Repregunta sin pena</b> — si no entendiste, di "no entendí la parte de…". Claude nunca se enoja.</li>
-        <li>🎭 <b>"Actúa como…"</b> — pídele que sea tu maestro de inglés, tu entrenador de mate o un guía de dinosaurios.</li>
-      </ul>
-      <div class="ejemplo bueno">✅ "Actúa como mi entrenador de inglés. Enséñame 5 frases para usar en Fortnite y hazme un mini examen al final."</div>
-      <p>Cuando termines las lecciones, pasa al <b>examen de la Academia</b> y luego a las <b>misiones reales</b>. 🚀</p>`,
+    build: () => [
+      { type: 'info', img: 'yoda', text: 'Frases mágicas, aprender debes:<br><br>🗣️ "Explícamelo como si tuviera 13 años"<br>🌰 "Dame un ejemplo"<br>❓ "Hazme preguntas para ver si entendí"' },
+      { type: 'info', img: 'obiwan', text: 'El truco maestro: <b>"Actúa como…"</b><br><br>"Actúa como mi maestro de inglés" y Claude se transforma, como un actor. 🎭<br><br>Y si no entiendes: REPREGUNTA. Nunca se enoja.' },
+      { type: 'mc', img: 'steve', text: 'Quieres aprender inglés. ¿Cuál prompt es mejor?', options: ['"Actúa como mi maestro: enséñame 5 palabras de Minecraft en inglés y examíname"', '"inglés"', '"hola"', '"dame todas las palabras que existen"'], answer: '"Actúa como mi maestro: enséñame 5 palabras de Minecraft en inglés y examíname"' },
+      tfQ('Claude se enoja si le preguntas lo mismo dos veces', false, { img: 'yoda', note: 'Repreguntar es de pros' }),
+      { type: 'mc', img: 'mrdna', text: '¿Qué frase mágica pide que TODO se entienda mejor?', options: ['"Dame un ejemplo"', '"Escribe más largo"', '"Usa palabras difíciles"', '"Responde en chino"'], answer: '"Dame un ejemplo"' },
+      { type: 'mc', img: 'goku', text: 'Para que Claude sea tu entrenador de mate, le dices…', options: ['"Actúa como mi entrenador de matemáticas"', '"matemáticas"', '"entrena"', '"hola mate"'], answer: '"Actúa como mi entrenador de matemáticas"' },
+      tfQ('"Hazme preguntas para ver si entendí" es un buen truco para estudiar', true, { img: 'obiwan' }),
+    ],
   },
 ];
 
-const CLAUDE_QUIZ = [
-  {
-    text: '¿Qué es Claude?', emoji: '🤖',
-    options: [
-      'Una IA con la que platicas y te ayuda a aprender',
-      'Un buscador como Google',
-      'Un videojuego de peleas',
-      'Un robot físico que camina',
-    ],
-    answer: 'Una IA con la que platicas y te ayuda a aprender',
-  },
-  {
-    text: '¿Qué es un "prompt"?', emoji: '✍️',
-    options: [
-      'El mensaje o instrucción que le escribes a la IA',
-      'Un tipo de virus',
-      'El nombre del creador de Claude',
-      'Un botón del teclado',
-    ],
-    answer: 'El mensaje o instrucción que le escribes a la IA',
-  },
-  {
-    text: 'Tienes tarea sobre dinosaurios. ¿Cuál prompt es MEJOR?', emoji: '🦖',
-    options: [
-      '"Explícame en 5 puntos fáciles por qué se extinguieron los dinosaurios, tengo 13 años"',
-      '"dinosaurios"',
-      '"haz mi tarea"',
-      '"dime todo sobre todo"',
-    ],
-    answer: '"Explícame en 5 puntos fáciles por qué se extinguieron los dinosaurios, tengo 13 años"',
-    note: 'Específico + contexto + formato',
-  },
-  {
-    text: 'Claude te da un dato para tu examen. ¿Qué haces?', emoji: '🔍',
-    options: [
-      'Lo verifico en mi libro o con un adulto',
-      'Lo copio sin leer, la IA nunca falla',
-      'Lo publico en internet',
-      'Borro la conversación asustado',
-    ],
-    answer: 'Lo verifico en mi libro o con un adulto',
-    note: 'La IA a veces "alucina" datos',
-  },
-  {
-    text: '¿Qué NO debes compartir con una IA?', emoji: '🔒',
-    options: [
-      'Tu dirección, contraseñas y datos personales',
-      'Tus dudas de matemáticas',
-      'Preguntas sobre Minecraft',
-      'Lo que quieres aprender',
-    ],
-    answer: 'Tu dirección, contraseñas y datos personales',
-  },
-  {
-    text: 'No entendiste la respuesta de Claude. ¿Qué haces?', emoji: '🤷',
-    options: [
-      'Le pido que lo explique más fácil o con ejemplos',
-      'Me rindo para siempre',
-      'Le escribo lo mismo en mayúsculas',
-      'Apago la computadora',
-    ],
-    answer: 'Le pido que lo explique más fácil o con ejemplos',
-    note: 'Repreguntar es de pros, Claude nunca se enoja',
-  },
-  {
-    text: 'Quieres aprender inglés con Claude. ¿Cuál prompt es MEJOR?', emoji: '🗣️',
-    options: [
-      '"Actúa como mi maestro: enséñame 5 palabras de Minecraft en inglés con ejemplos y examíname"',
-      '"inglés"',
-      '"hola"',
-      '"dame todas las palabras en inglés que existen"',
-    ],
-    answer: '"Actúa como mi maestro: enséñame 5 palabras de Minecraft en inglés con ejemplos y examíname"',
-  },
-  {
-    text: '¿Para qué es mejor usar la IA en la escuela?', emoji: '🎓',
-    options: [
-      'Para que me EXPLIQUE y practique, y aprender yo',
-      'Para que haga mi tarea y yo no aprenda nada',
-      'Para hacer trampa en los exámenes',
-      'Para nada, está prohibida pensar con ella',
-    ],
-    answer: 'Para que me EXPLIQUE y practique, y aprender yo',
-  },
+const CLAUDE_EXAM_BANK = [
+  { text: '¿Qué es Claude?', img: 'mrdna', options: ['Una IA con la que platicas y te ayuda a aprender', 'Un buscador como Google', 'Un videojuego', 'Un robot físico'], answer: 'Una IA con la que platicas y te ayuda a aprender' },
+  { text: '¿Qué es un "prompt"?', img: 'shenron', options: ['El mensaje o instrucción que le escribes a la IA', 'Un tipo de virus', 'El creador de Claude', 'Un botón del teclado'], answer: 'El mensaje o instrucción que le escribes a la IA' },
+  { text: 'Para la tarea de dinosaurios, ¿cuál prompt es MEJOR?', img: 'trex', options: ['"Explícame en 5 puntos fáciles por qué se extinguieron, tengo 13 años"', '"dinosaurios"', '"haz mi tarea"', '"dime todo sobre todo"'], answer: '"Explícame en 5 puntos fáciles por qué se extinguieron, tengo 13 años"' },
+  { text: 'Claude te da un dato para tu examen. ¿Qué haces?', img: 'mrdna', options: ['Lo verifico en mi libro o con un adulto', 'Lo copio sin leer', 'Lo publico en internet', 'Borro todo asustado'], answer: 'Lo verifico en mi libro o con un adulto' },
+  { text: '¿Qué NO debes compartir con una IA?', img: 'creeper', options: ['Tu dirección, contraseñas y datos personales', 'Tus dudas de matemáticas', 'Preguntas sobre Minecraft', 'Lo que quieres aprender'], answer: 'Tu dirección, contraseñas y datos personales' },
+  { text: 'No entendiste la respuesta. ¿Qué haces?', img: 'yoda', options: ['Le pido que lo explique más fácil o con ejemplos', 'Me rindo', 'Escribo lo mismo en mayúsculas', 'Apago la computadora'], answer: 'Le pido que lo explique más fácil o con ejemplos' },
+  { text: 'Quieres aprender inglés con Claude. ¿Cuál prompt es MEJOR?', img: 'steve', options: ['"Actúa como mi maestro: 5 palabras de Minecraft en inglés con ejemplos y examíname"', '"inglés"', '"hola"', '"dame todas las palabras"'], answer: '"Actúa como mi maestro: 5 palabras de Minecraft en inglés con ejemplos y examíname"' },
+  { text: '¿Para qué es mejor usar la IA en la escuela?', img: 'gohan', options: ['Para que me EXPLIQUE y practique, y aprender yo', 'Para que haga mi tarea', 'Para hacer trampa', 'Para nada'], answer: 'Para que me EXPLIQUE y practique, y aprender yo' },
+  { text: 'Cuando la IA inventa un dato con mucha seguridad, se dice que…', img: 'tnt', options: ['Alucina', 'Sueña', 'Glitchea', 'Lagea'], answer: 'Alucina' },
+  { text: 'El truco "Actúa como mi entrenador" sirve para…', img: 'obiwan', options: ['Que Claude tome un papel y te enseñe así', 'Activar un modo secreto', 'Hacerlo más rápido', 'Nada'], answer: 'Que Claude tome un papel y te enseñe así' },
+  { text: 'Pedir el deseo a Shenlong sin detalles es como un prompt…', img: 'shenron', options: ['Vago: el resultado sale raro', 'Perfecto', 'Ilegal', 'Mágico'], answer: 'Vago: el resultado sale raro' },
+  { text: '¿Cuál de estas peticiones trae el FORMATO pedido?', img: 'esfera_bola', options: ['"…explícamelo en una lista de 5 puntos"', '"…explícamelo"', '"…dime"', '"…ayuda"'], answer: '"…explícamelo en una lista de 5 puntos"' },
 ];
+const CLAUDE_EXAM_TF = [
+  ['Claude es una persona real', false],
+  ['Repreguntar a la IA es de buenos estudiantes', true],
+  ['La IA puede equivocarse aunque suene muy segura', true],
+  ['Compartir tu contraseña con una IA es seguro', false],
+];
+
+function buildClaudeExam() {
+  const mc = shuffle(CLAUDE_EXAM_BANK).slice(0, 8).map(q => ({
+    type: 'mc', text: q.text, img: q.img, options: shuffle(q.options.slice()), answer: q.answer,
+  }));
+  const tfs = shuffle(CLAUDE_EXAM_TF).slice(0, 2).map(([t, v]) => tfQ(t, v, { img: motivador() }));
+  return shuffle(mc.concat(tfs));
+}
 
 const CLAUDE_MISSIONS = [
   { id: 'm1', e: '🐉', t: 'Pídele a Claude que te explique qué es una inteligencia artificial usando ejemplos de Dragon Ball.' },
@@ -519,6 +537,115 @@ const CLAUDE_MISSIONS = [
   { id: 'm8', e: '🚀', t: 'JEFE FINAL: inventa tu propio prompt épico (específico + contexto + formato) y muéstraselo a tu papá.' },
 ];
 
+/* ================= PANTALLAS ================= */
+
+function showTechHome() {
+  const app = $('#app');
+  const rp = robotProgress();
+  const cl = unitState(S.tech, 'complab');
+  const clSubsOk = [0, 1, 2].filter(i => subIsDone(cl, i)).length;
+  app.innerHTML = `
+    <button class="back-link" id="back">← Inicio</button>
+    <h1 class="screen-title">💎 Mundo Tecnología</h1>
+    <p class="screen-sub">Entiende cómo piensan las computadoras y domina la inteligencia artificial.</p>
+    <button class="world-card tech has-hero" id="go-robot">
+      ${imgTag('steve', 'hero-img', 'Steve')}
+      <h2>Robo-Steve: programa al robot</h2>
+      <p>Secuencias, funciones y bucles con las manos en el teclado.</p>
+      <div class="progress-note">💎 ${rp.done}/${rp.total} niveles</div>
+    </button>
+    <button class="world-card tech has-hero" id="go-complab">
+      ${imgTag('r2d2', 'hero-img', 'R2-D2')}
+      <h2>Compu-Lab: ¿cómo piensa una compu?</h2>
+      <p>Binario con focos 💡, algoritmos como recetas y las piezas de la bestia.</p>
+      <div class="progress-note">${cl.examDone ? '🏆 Examen aprobado' : `🔌 ${clSubsOk}/3 lecciones`}</div>
+    </button>
+    <button class="world-card tech has-hero" id="go-claude">
+      ${imgTag('mrdna', 'hero-img', 'Mr. DNA')}
+      <h2>Academia Claude: domina la IA</h2>
+      <p>Lecciones cortas y prácticas + misiones reales con tu papá.</p>
+      <div class="progress-note">${S.claude.quizDone ? '🏆 Maestro de la IA' : `✨ ${S.claude.read.length}/${CLAUDE_LESSONS.length} lecciones`}</div>
+    </button>
+  `;
+  $('#back').addEventListener('click', showHome);
+  $('#go-robot').addEventListener('click', showRobotLevels);
+  $('#go-complab').addEventListener('click', showComplab);
+  $('#go-claude').addEventListener('click', showClaudeHome);
+}
+
+/* --- Compu-Lab --- */
+function showComplab() {
+  const st = unitState(S.tech, 'complab');
+  const examReady = allSubsDone(st, 3);
+  const app = $('#app');
+  app.innerHTML = `
+    <button class="back-link" id="back">← Mundo Tecnología</button>
+    <h1 class="screen-title">🔌 Compu-Lab</h1>
+    <p class="screen-sub">Tres lecciones para entender cómo "piensa" una computadora, y el examen para demostrarlo.</p>
+    ${COMPLAB_SUBS.map((sub, i) => {
+      const done = subIsDone(st, i);
+      const locked = i > 0 && !subIsDone(st, i - 1) && !done;
+      return `
+        <button class="item-card" data-sub="${i}" ${locked ? 'disabled' : ''}>
+          <span class="item-emoji">${locked ? '🔒' : (done ? '✅' : '🔬')}</span>
+          <span class="item-body">
+            <span class="item-title">Lección ${i + 1}: ${esc(sub.t)}</span>
+            <span class="item-sub">Interactiva · acierta el 80% para dominarla</span>
+          </span>
+          <span class="item-status">${done ? '⭐' : (locked ? '' : '▶️')}</span>
+        </button>`;
+    }).join('')}
+    <button class="item-card exam-card" id="go-exam" ${examReady ? '' : 'disabled'}>
+      ${imgTag('diamond', 'item-img', 'examen')}
+      <span class="item-body">
+        <span class="item-title">🏆 EXAMEN FINAL</span>
+        <span class="item-sub">${examReady
+          ? (st.examDone ? `Aprobado · Mejor: ${st.examBest}/12 · Intentos: ${st.examTries}` : `Binario + algoritmos + hardware${st.examTries ? ` · Intentos: ${st.examTries}` : ''}`)
+          : 'Completa las 3 lecciones para desbloquearlo'}</span>
+      </span>
+      <span class="item-status">${st.examDone ? '🏆' : (examReady ? '🔥' : '🔒')}</span>
+    </button>
+  `;
+  $('#back').addEventListener('click', showTechHome);
+  app.querySelectorAll('[data-sub]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.sub;
+    startQuiz({
+      qs: COMPLAB_SUBS[i].build(),
+      onBack: showComplab,
+      onDone: (s, t, passed) => {
+        if (passed) {
+          const st2 = unitState(S.tech, 'complab');
+          st2.subDone[i] = true;
+          save();
+        }
+      },
+    });
+  }));
+  $('#go-exam').addEventListener('click', () => {
+    const st2 = unitState(S.tech, 'complab');
+    st2.examTries++;
+    save();
+    startQuiz({
+      qs: buildComplabExam(),
+      isExam: true,
+      onBack: showComplab,
+      onDone: (score, total, passed) => {
+        st2.examBest = Math.max(st2.examBest || 0, score);
+        const firstTime = passed && !st2.examDone;
+        if (passed) st2.examDone = true;
+        save();
+        if (firstTime) {
+          addXP(60);
+          const slot = $('#reward-slot');
+          if (slot) slot.innerHTML = `<div class="reward-banner">${imgTag('r2d2', 'r-img', 'R2-D2')}🔌 ¡Ya piensas como una computadora! Insignia de Compu-Lab ganada.</div>`;
+          checkCoupons();
+        }
+      },
+    });
+  });
+}
+
+/* --- Academia Claude --- */
 function showClaudeHome() {
   const app = $('#app');
   const read = S.claude.read;
@@ -527,91 +654,76 @@ function showClaudeHome() {
   app.innerHTML = `
     <button class="back-link" id="back">← Mundo Tecnología</button>
     <h1 class="screen-title">✨ Academia Claude</h1>
-    <p class="screen-sub">Aprende a usar la IA como un pro: lecciones → examen → misiones reales.</p>
-    <h2 style="font-size:1rem;margin-bottom:10px">📖 Lecciones</h2>
+    <p class="screen-sub">Lecciones cortas y prácticas: aprendes respondiendo, no leyendo choros.</p>
     ${CLAUDE_LESSONS.map((l, i) => `
       <button class="item-card" data-lesson="${i}">
         <span class="item-emoji">${l.emoji}</span>
-        <span class="item-body"><span class="item-title">${esc(l.title)}</span></span>
+        <span class="item-body">
+          <span class="item-title">${esc(l.title)}</span>
+          <span class="item-sub">Mini-lección interactiva</span>
+        </span>
         <span class="item-status">${read.includes(l.id) ? '✅' : '▶️'}</span>
       </button>`).join('')}
-    <div class="spacer"></div>
-    <button class="item-card" id="go-quiz" ${allRead ? '' : 'disabled'}>
-      <span class="item-emoji">${allRead ? '📝' : '🔒'}</span>
+    <button class="item-card exam-card" id="go-quiz" ${allRead ? '' : 'disabled'}>
+      ${imgTag('mrdna', 'item-img', 'examen')}
       <span class="item-body">
-        <span class="item-title">Examen de la Academia</span>
-        <span class="item-sub">${allRead ? (S.claude.quizDone ? `Aprobado · Mejor: ${S.claude.quizBest}/8` : 'Acierta 7 de 8 para ganar la insignia 🏆') : 'Termina las 4 lecciones para desbloquear'}</span>
+        <span class="item-title">🏆 EXAMEN DE LA ACADEMIA</span>
+        <span class="item-sub">${allRead ? (S.claude.quizDone ? `Aprobado · Mejor: ${S.claude.quizBest}/10 · Intentos: ${S.claude.quizTries || 0}` : 'Preguntas al azar del banco · acierta 8 de 10') : 'Termina las 4 lecciones para desbloquearlo'}</span>
       </span>
-      <span class="item-status">${S.claude.quizDone ? '🏆' : ''}</span>
+      <span class="item-status">${S.claude.quizDone ? '🏆' : (allRead ? '🔥' : '🔒')}</span>
     </button>
     <button class="item-card" id="go-missions">
       <span class="item-emoji">🎯</span>
       <span class="item-body">
         <span class="item-title">Misiones reales con Claude</span>
-        <span class="item-sub">Para hacer con tu papá o tú solo · ${missionsDone}/${CLAUDE_MISSIONS.length} completadas</span>
+        <span class="item-sub">Para hacer con tu papá · ${missionsDone}/${CLAUDE_MISSIONS.length} completadas</span>
       </span>
       <span class="item-status">${missionsDone >= CLAUDE_MISSIONS.length ? '🌟' : ''}</span>
     </button>
   `;
   $('#back').addEventListener('click', showTechHome);
-  app.querySelectorAll('[data-lesson]').forEach(b =>
-    b.addEventListener('click', () => showClaudeLesson(+b.dataset.lesson)));
-  $('#go-quiz').addEventListener('click', startClaudeQuiz);
-  $('#go-missions').addEventListener('click', showClaudeMissions);
-}
-
-function showClaudeLesson(idx) {
-  const l = CLAUDE_LESSONS[idx];
-  const app = $('#app');
-  app.innerHTML = `
-    <button class="back-link" id="back">← Academia Claude</button>
-    <div class="lesson-body">${l.body}</div>
-    <div class="btn-row" style="justify-content:center">
-      <button class="btn teal" id="l-done">${S.claude.read.includes(l.id) ? 'Leída de nuevo ✓' : '¡Entendido! ✓ (+15 XP)'}</button>
-      ${idx + 1 < CLAUDE_LESSONS.length ? `<button class="btn secondary" id="l-next">Siguiente lección →</button>` : ''}
-    </div>
-  `;
-  $('#back').addEventListener('click', showClaudeHome);
-  $('#l-done').addEventListener('click', () => {
-    if (!S.claude.read.includes(l.id)) {
-      S.claude.read.push(l.id);
-      save();
-      addXP(15);
-      sfxGood();
-      touchStreak();
-    }
-    showClaudeHome();
-  });
-  const nx = $('#l-next');
-  if (nx) nx.addEventListener('click', () => showClaudeLesson(idx + 1));
-}
-
-function startClaudeQuiz() {
-  if (S.claude.read.length < CLAUDE_LESSONS.length) return;
-  const motivadores = shuffle(['mrdna', 'goku', 'steve', 'peely', 'reese', 'blue', 'vegeta', 'dewey']);
-  const qs = shuffle(CLAUDE_QUIZ).map((q, i) => ({
-    type: 'mc', emoji: q.emoji, img: motivadores[i % motivadores.length], text: q.text,
-    options: shuffle(q.options.slice()), answer: q.answer, note: q.note,
+  app.querySelectorAll('[data-lesson]').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.lesson;
+    const l = CLAUDE_LESSONS[i];
+    startQuiz({
+      qs: l.build(),
+      onBack: showClaudeHome,
+      onDone: (s, t, passed) => {
+        if (passed && !S.claude.read.includes(l.id)) {
+          S.claude.read.push(l.id);
+          addXP(15);
+          save();
+        }
+      },
+    });
   }));
-  startQuiz({
-    qs,
-    onBack: showClaudeHome,
-    onDone: (score, total, passed) => {
-      S.claude.quizBest = Math.max(S.claude.quizBest, score);
-      const firstTime = passed && !S.claude.quizDone;
-      if (passed) S.claude.quizDone = true;
-      save();
-      if (firstTime) {
-        addXP(60);
-        const slot = $('#reward-slot');
-        if (slot) slot.innerHTML = `
-          <div class="reward-banner">
-            <span class="r-emoji">🏆</span>
-            ¡Insignia MAESTRO DE LA IA desbloqueada! Ahora ve a las misiones reales.
-          </div>`;
-      }
-    },
+  $('#go-quiz').addEventListener('click', () => {
+    if (S.claude.read.length < CLAUDE_LESSONS.length) return;
+    S.claude.quizTries = (S.claude.quizTries || 0) + 1;
+    save();
+    startQuiz({
+      qs: buildClaudeExam(),
+      isExam: true,
+      onBack: showClaudeHome,
+      onDone: (score, total, passed) => {
+        S.claude.quizBest = Math.max(S.claude.quizBest, score);
+        const firstTime = passed && !S.claude.quizDone;
+        if (passed) S.claude.quizDone = true;
+        save();
+        if (firstTime) {
+          addXP(60);
+          const slot = $('#reward-slot');
+          if (slot) slot.innerHTML = `
+            <div class="reward-banner">
+              ${imgTag('mrdna', 'r-img', 'Mr. DNA')}
+              🏆 ¡Insignia MAESTRO DE LA IA! Ahora ve a las misiones reales.
+            </div>`;
+          checkCoupons();
+        }
+      },
+    });
   });
+  $('#go-missions').addEventListener('click', showClaudeMissions);
 }
 
 function showClaudeMissions() {
@@ -619,7 +731,7 @@ function showClaudeMissions() {
   app.innerHTML = `
     <button class="back-link" id="back">← Academia Claude</button>
     <h1 class="screen-title">🎯 Misiones reales con Claude</h1>
-    <p class="screen-sub">Abre Claude (con tu papá o mamá) y completa estas misiones. Marca cada una cuando la termines: +20 XP por misión.</p>
+    <p class="screen-sub">Abre Claude (con tu papá o mamá) y completa estas misiones. Marca cada una al terminarla: +20 XP.</p>
     ${CLAUDE_MISSIONS.map(m => {
       const done = S.claude.missions.includes(m.id);
       return `
@@ -628,7 +740,7 @@ function showClaudeMissions() {
           <span class="m-text"><b>${m.e}</b> ${esc(m.t)}</span>
         </button>`;
     }).join('')}
-    <p class="center muted">💡 Tip: usa lo que aprendiste en las lecciones — sé específico, da contexto y pide el formato.</p>
+    <p class="center muted">💡 Tip: sé específico, da contexto y pide el formato — como un deseo bien pedido a Shenlong.</p>
   `;
   $('#back').addEventListener('click', showClaudeHome);
   app.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => {

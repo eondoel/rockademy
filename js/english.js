@@ -242,39 +242,159 @@ const WORD_IMG = {
   "let's build a house": 'grass', 'good luck, have fun': 'battlebus',
 };
 
+
+/* ================= LECCIONES Y EXAMEN =================
+   Cada unidad: 3 lecciones (palabras nuevas + 10 ejercicios variados)
+   y un examen final que hace nacer al dino. */
+
+const ENGLISH_SUBS = 3;
+
+function chunkItems(items) {
+  const per = Math.ceil(items.length / ENGLISH_SUBS);
+  return [items.slice(0, per), items.slice(per, per * 2), items.slice(per * 2)];
+}
+
+/* --- fábrica de ejercicios (intercalado + variedad) --- */
+function exTrad(item, pool) {
+  const others = shuffle(pool.filter(x => x.en !== item.en)).slice(0, 3);
+  return {
+    type: 'mc', emoji: item.e, img: WORD_IMG[item.en] || motivador(), say: item.en,
+    text: `¿Qué significa <b style="color:var(--teal)">${esc(item.en)}</b>?`,
+    options: shuffle([item.es, ...others.map(o => o.es)]),
+    answer: item.es,
+  };
+}
+function exRev(item, pool) {
+  const others = shuffle(pool.filter(x => x.en !== item.en)).slice(0, 3);
+  return {
+    type: 'mc', emoji: item.e, img: WORD_IMG[item.en] || motivador(),
+    text: `¿Cómo se dice <b style="color:var(--accent)">${esc(item.es)}</b> en inglés?`,
+    options: shuffle([item.en, ...others.map(o => o.en)]),
+    answer: item.en,
+  };
+}
+function exListen(item, pool, fallbackImg) {
+  const others = shuffle(pool.filter(x => x.en !== item.en)).slice(0, 3);
+  return {
+    type: 'mc', emoji: '🎧', img: fallbackImg, say: item.en,
+    text: 'Escucha con atención… ¿qué dice?',
+    options: shuffle([item.en, ...others.map(o => o.en)]),
+    answer: item.en,
+  };
+}
+function exSpellEn(item) {
+  return { type: 'spell', es: item.es, emoji: item.e, img: WORD_IMG[item.en], word: item.en };
+}
+function exTFEn(item, pool) {
+  const isTrue = Math.random() < 0.5;
+  const shown = isTrue ? item.es : pick(pool.filter(x => x.en !== item.en)).es;
+  return tfQ(`“<b>${esc(item.en)}</b>” significa “<b>${esc(shown)}</b>”`, isTrue,
+    { say: item.en, img: WORD_IMG[item.en] || motivador(), note: `“${item.en}” = “${item.es}”` });
+}
+function exPickImgEn(item, pool) {
+  const withImg = pool.filter(x => WORD_IMG[x.en] && x.en !== item.en);
+  if (!WORD_IMG[item.en] || withImg.length < 3) return null;
+  const others = shuffle(withImg).slice(0, 3);
+  return {
+    type: 'pickimg', say: item.en,
+    text: `👆 Toca la imagen de <b style="color:var(--teal)">${esc(item.en)}</b>`,
+    options: shuffle([WORD_IMG[item.en], ...others.map(o => WORD_IMG[o.en])]),
+    answer: WORD_IMG[item.en],
+  };
+}
+function exOrderEn(item) {
+  const words = item.en.split(' ');
+  if (words.length < 3) return null;
+  return {
+    type: 'order', emoji: item.e, img: WORD_IMG[item.en], say: item.en,
+    text: `Ordena la frase en inglés:<br>“<b style="color:var(--accent)">${esc(item.es)}</b>”`,
+    tokens: words,
+  };
+}
+function exMatchEn(items) {
+  return { type: 'match', text: '🔗 Une cada palabra con su significado', pairs: items.map(it => [it.en, it.es]) };
+}
+
+function englishExercise(item, pool, unitImg) {
+  const makers = [() => exTrad(item, pool), () => exRev(item, pool), () => exListen(item, pool, unitImg)];
+  if (/^[a-z]{3,8}$/.test(item.en)) makers.push(() => exSpellEn(item));
+  makers.push(() => exTFEn(item, pool));
+  const pi = exPickImgEn(item, pool);
+  if (pi) makers.push(() => pi);
+  const or = exOrderEn(item);
+  if (or) makers.push(() => or);
+  return pick(makers)();
+}
+
+function buildEnglishLesson(u, subIdx) {
+  const groups = chunkItems(u.items);
+  const focus = groups[subIdx];
+  const review = groups.slice(0, subIdx).flat();
+  const qs = [];
+  // presentación de palabras nuevas (segmentación: una por pantalla)
+  focus.forEach(item => qs.push({
+    type: 'info', img: WORD_IMG[item.en], emoji: item.e, say: item.en,
+    text: `Palabra nueva:<br><span style="font-size:1.8rem;color:var(--teal);font-weight:900">${esc(item.en)}</span><br>= <b>${esc(item.es)}</b><br><span class="muted" style="font-size:.85rem">🔊 Escúchala y repítela en voz alta</span>`,
+  }));
+  // 9 ejercicios: enfoque en palabras nuevas + 2 de repaso (intercalado)
+  const targets = [];
+  const cyc = shuffle(focus);
+  for (let n = 0; n < (review.length ? 7 : 9); n++) targets.push(cyc[n % cyc.length]);
+  if (review.length) { targets.push(pick(review), pick(review)); }
+  const exs = shuffle(targets).map(t => englishExercise(t, u.items, u.img));
+  // 1 unir-parejas con las palabras del grupo
+  const matchPool = shuffle(focus.concat(review)).slice(0, 4);
+  exs.splice(ri(2, exs.length), 0, exMatchEn(matchPool));
+  return qs.concat(exs);
+}
+
+function buildEnglishExam(u) {
+  const all = shuffle(u.items);
+  const qs = [];
+  qs.push(exMatchEn(shuffle(u.items).slice(0, 4)));
+  const multi = u.items.filter(x => x.en.split(' ').length >= 3);
+  if (multi.length) qs.push(exOrderEn(pick(multi)));
+  let n = 0;
+  while (qs.length < 12) {
+    qs.push(englishExercise(all[n % all.length], u.items, u.img));
+    n++;
+  }
+  return shuffle(qs);
+}
+
+/* --- progreso y pantallas --- */
 function englishProgress() {
-  const done = ENGLISH_UNITS.filter(u => S.english[u.id] && S.english[u.id].done).length;
+  const done = ENGLISH_UNITS.filter(u => unitState(S.english, u.id).examDone).length;
   return { done, total: ENGLISH_UNITS.length };
 }
 
-/* ---------- Pantallas ---------- */
 function showEnglishHome() {
   const app = $('#app');
   const p = englishProgress();
   app.innerHTML = `
     <button class="back-link" id="back">← Inicio</button>
     <h1 class="screen-title">🦖 Isla Jurásica: Inglés</h1>
-    <p class="screen-sub">Aprende palabras, escúchalas y gana misiones. Cada unidad ganada hace nacer un dino para tu colección.</p>
+    <p class="screen-sub">3 lecciones por unidad y un examen final. Aprueba el examen y nace tu dino.</p>
     ${imgTag('trex', 'scene-banner contain', 'T-Rex de Jurassic Park')}
-    <p class="muted" style="font-size:.85rem;margin-bottom:12px">📏 Reglas: en cada unidad primero <b>aprende</b> las palabras con sonido 🔊 y repítelas en voz alta. Luego juega la <b>misión</b>: 10 retos, con <b>8 aciertos</b> nace tu dino 🥚→🦖.</p>
     <div class="collection">
       <span class="c-label">🥚 TU COLECCIÓN DE DINOS (${p.done}/${p.total}) — los oscuros aún no nacen</span>
       ${ENGLISH_UNITS.map(u => {
-        const done = S.english[u.id] && S.english[u.id].done;
+        const done = unitState(S.english, u.id).examDone;
         return `<span class="c-item" title="${esc(u.title)}">${imgTag(u.dinoImg, 'status-img' + (done ? '' : ' pending'), u.title)}</span>`;
       }).join('')}
     </div>
     <div class="spacer"></div>
     ${ENGLISH_UNITS.map((u, idx) => {
-      const st = S.english[u.id] || {};
+      const st = unitState(S.english, u.id);
+      const subsOk = [0, 1, 2].filter(i => subIsDone(st, i)).length;
       return `
         <button class="item-card" data-unit="${idx}">
           ${imgTag(u.img, 'item-img', u.title)}
           <span class="item-body">
             <span class="item-title">Unidad ${idx + 1}: ${esc(u.title)}</span>
-            <span class="item-sub">${esc(u.desc)}${st.best ? ` · Mejor: ${st.best}/10` : ''}</span>
+            <span class="item-sub">${st.examDone ? '✅ Examen aprobado' : `📖 ${subsOk}/3 lecciones${allSubsDone(st, 3) ? ' · ¡examen listo!' : ''}`}</span>
           </span>
-          <span class="item-status">${imgTag(u.dinoImg, 'status-img' + (st.done ? '' : ' pending'), 'dino')}</span>
+          <span class="item-status">${imgTag(u.dinoImg, 'status-img' + (st.examDone ? '' : ' pending'), 'dino')}</span>
         </button>`;
     }).join('')}
   `;
@@ -285,30 +405,96 @@ function showEnglishHome() {
 
 function showEnglishUnit(idx) {
   const u = ENGLISH_UNITS[idx];
-  const st = S.english[u.id] || {};
+  const st = unitState(S.english, u.id);
+  const groups = chunkItems(u.items);
+  const examReady = allSubsDone(st, 3);
   const app = $('#app');
   app.innerHTML = `
     <button class="back-link" id="back">← Isla Jurásica</button>
-    <h1 class="screen-title">${u.emoji} Unidad ${idx + 1}: ${esc(u.title)}</h1>
-    <p class="screen-sub">${esc(u.desc)} · ${u.items.length} palabras</p>
-    <button class="world-card english" id="go-learn">
-      <span class="big-emoji">📖</span>
-      <h2>1. Aprende las palabras</h2>
-      <p>Tarjetas con sonido. Toca 🔊 y repite en voz alta cada palabra.</p>
+    <h1 class="screen-title">Unidad ${idx + 1}: ${esc(u.title)}</h1>
+    <p class="screen-sub">${esc(u.desc)} · ${u.items.length} palabras en 3 lecciones</p>
+    ${groups.map((g, i) => {
+      const done = subIsDone(st, i);
+      const locked = i > 0 && !subIsDone(st, i - 1) && !done;
+      return `
+        <button class="item-card" data-sub="${i}" ${locked ? 'disabled' : ''}>
+          <span class="item-emoji">${locked ? '🔒' : (done ? '✅' : '📖')}</span>
+          <span class="item-body">
+            <span class="item-title">Lección ${i + 1}</span>
+            <span class="item-sub">${g.map(x => esc(x.en)).join(' · ')}</span>
+          </span>
+          <span class="item-status">${done ? '⭐' : (locked ? '' : '▶️')}</span>
+        </button>`;
+    }).join('')}
+    <button class="item-card exam-card" id="go-exam" ${examReady ? '' : 'disabled'}>
+      ${imgTag(u.dinoImg, 'item-img', 'dino')}
+      <span class="item-body">
+        <span class="item-title">🏆 EXAMEN FINAL</span>
+        <span class="item-sub">${examReady
+          ? (st.examDone ? `Aprobado · Mejor: ${st.examBest}/12 · Intentos: ${st.examTries}` : `12 retos de todo lo aprendido${st.examTries ? ` · Intentos: ${st.examTries}` : ''}`)
+          : 'Completa las 3 lecciones para desbloquearlo'}</span>
+      </span>
+      <span class="item-status">${st.examDone ? '🏆' : (examReady ? '🔥' : '🔒')}</span>
     </button>
-    <button class="world-card english has-hero" id="go-quiz">
-      ${imgTag(u.dinoImg, 'hero-img', 'dino')}
-      <span class="big-emoji">🎯</span>
-      <h2>2. Misión: ¡demuestra tu poder!</h2>
-      <p>10 retos. Acierta 8 o más y nace este dino${st.done ? ' (¡ya lo tienes!)' : ' que ves aquí'}.</p>
-      ${st.best ? `<div class="progress-note">Mejor puntaje: ${st.best}/10</div>` : ''}
-    </button>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn small secondary" id="go-cards">🃏 Repasar tarjetas con audio</button>
+    </div>
   `;
   $('#back').addEventListener('click', showEnglishHome);
-  $('#go-learn').addEventListener('click', () => showFlashcards(idx));
-  $('#go-quiz').addEventListener('click', () => startEnglishQuiz(idx));
+  app.querySelectorAll('[data-sub]').forEach(b =>
+    b.addEventListener('click', () => startEnglishLesson(idx, +b.dataset.sub)));
+  $('#go-exam').addEventListener('click', () => startEnglishExam(idx));
+  $('#go-cards').addEventListener('click', () => showFlashcards(idx));
 }
 
+function startEnglishLesson(idx, subIdx) {
+  const u = ENGLISH_UNITS[idx];
+  startQuiz({
+    qs: buildEnglishLesson(u, subIdx),
+    onBack: () => showEnglishUnit(idx),
+    onDone: (score, total, passed) => {
+      if (passed) {
+        const st = unitState(S.english, u.id);
+        st.subDone[subIdx] = true;
+        save();
+        const slot = $('#reward-slot');
+        if (slot && allSubsDone(st, 3) && !st.examDone) {
+          slot.innerHTML = `<div class="reward-banner">🔥 ¡Las 3 lecciones dominadas! El EXAMEN FINAL te espera para liberar a tu dino.</div>`;
+        }
+      }
+    },
+  });
+}
+
+function startEnglishExam(idx) {
+  const u = ENGLISH_UNITS[idx];
+  const st = unitState(S.english, u.id);
+  st.examTries++;
+  save();
+  startQuiz({
+    qs: buildEnglishExam(u),
+    isExam: true,
+    onBack: () => showEnglishUnit(idx),
+    onDone: (score, total, passed) => {
+      st.examBest = Math.max(st.examBest || 0, score);
+      const firstTime = passed && !st.examDone;
+      if (passed) st.examDone = true;
+      save();
+      if (firstTime) {
+        addXP(50);
+        const slot = $('#reward-slot');
+        if (slot) slot.innerHTML = `
+          <div class="reward-banner">
+            ${imgTag(u.dinoImg, 'r-img', 'dino nuevo')}
+            ¡Tu huevo eclosionó! Nuevo dino en tu colección. 🥚✨
+          </div>`;
+        checkCoupons();
+      }
+    },
+  });
+}
+
+/* --- tarjetas de repaso --- */
 function showFlashcards(idx) {
   const u = ENGLISH_UNITS[idx];
   let i = 0;
@@ -329,79 +515,16 @@ function showFlashcards(idx) {
         <span class="flash-count">${i + 1} / ${u.items.length}</span>
         ${i < u.items.length - 1
           ? `<button class="btn green" id="f-next">Siguiente →</button>`
-          : `<button class="btn" id="f-quiz">¡A la misión! 🎯</button>`}
+          : `<button class="btn" id="f-end">¡Listo! 🎯</button>`}
       </div>
-      <p class="center muted" style="margin-top:14px">💡 Escucha, repite en voz alta y luego pasa a la siguiente.</p>
+      <p class="center muted" style="margin-top:14px">💡 Escucha, repite en voz alta y pasa a la siguiente.</p>
     `;
     $('#back').addEventListener('click', () => showEnglishUnit(idx));
     $('#f-say').addEventListener('click', () => sayEN(item.en));
     const prev = $('#f-prev'); if (prev) prev.addEventListener('click', () => { i--; draw(); });
     const next = $('#f-next'); if (next) next.addEventListener('click', () => { i++; draw(); });
-    const quiz = $('#f-quiz'); if (quiz) quiz.addEventListener('click', () => startEnglishQuiz(idx));
+    const end = $('#f-end'); if (end) end.addEventListener('click', () => showEnglishUnit(idx));
     setTimeout(() => sayEN(item.en), 300);
   }
   draw();
-}
-
-function buildEnglishQuestions(u) {
-  const pool = shuffle(u.items);
-  const qs = [];
-  for (let n = 0; n < 10; n++) {
-    const item = pool[n % pool.length];
-    const others = shuffle(u.items.filter(x => x.en !== item.en)).slice(0, 3);
-    const wimg = WORD_IMG[item.en] || u.img; // toda pregunta lleva su motivador visual
-    const types = ['trad', 'rev', 'listen'];
-    if (/^[a-z]{3,8}$/.test(item.en)) types.push('spell', 'spell');
-    const t = pick(types);
-    if (t === 'spell') {
-      qs.push({ type: 'spell', es: item.es, emoji: item.e, img: WORD_IMG[item.en], word: item.en });
-    } else if (t === 'trad') {
-      qs.push({
-        type: 'mc', emoji: item.e, img: wimg, say: item.en,
-        text: `¿Qué significa <b style="color:var(--teal)">${esc(item.en)}</b>?`,
-        options: shuffle([item.es, ...others.map(o => o.es)]),
-        answer: item.es,
-      });
-    } else if (t === 'rev') {
-      qs.push({
-        type: 'mc', emoji: item.e, img: wimg,
-        text: `¿Cómo se dice <b style="color:var(--accent)">${esc(item.es)}</b> en inglés?`,
-        options: shuffle([item.en, ...others.map(o => o.en)]),
-        answer: item.en,
-      });
-    } else {
-      qs.push({
-        type: 'mc', emoji: '🎧', img: u.img, say: item.en,
-        text: 'Escucha con atención… ¿qué palabra es?',
-        options: shuffle([item.en, ...others.map(o => o.en)]),
-        answer: item.en,
-      });
-    }
-  }
-  return qs;
-}
-
-function startEnglishQuiz(idx) {
-  const u = ENGLISH_UNITS[idx];
-  startQuiz({
-    qs: buildEnglishQuestions(u),
-    onBack: () => showEnglishUnit(idx),
-    onDone: (score, total, passed) => {
-      const st = S.english[u.id] || { best: 0, done: false };
-      st.best = Math.max(st.best || 0, score);
-      const firstTime = passed && !st.done;
-      if (passed) st.done = true;
-      S.english[u.id] = st;
-      save();
-      if (firstTime) {
-        addXP(50);
-        const slot = $('#reward-slot');
-        if (slot) slot.innerHTML = `
-          <div class="reward-banner">
-            ${imgTag(u.dinoImg, 'r-img', 'dino nuevo')}
-            ¡Tu huevo eclosionó! Nuevo dino en tu colección. 🥚✨
-          </div>`;
-      }
-    },
-  });
 }

@@ -122,6 +122,9 @@ p.screen-sub { color: var(--muted); margin-bottom: 18px; font-size: .95rem; }
 .world-card.math .progress-note { color: var(--accent); }
 .world-card.tech { background: linear-gradient(135deg, #11343d, #1c2342 70%); }
 .world-card.tech .progress-note { color: var(--teal); }
+.world-card.general { background: linear-gradient(135deg, #2a1747, #1c2342 70%); }
+.world-card.general .progress-note { color: var(--purple); }
+.world-card.parent-card { background: linear-gradient(135deg, #1c2f4a, #1c2342 70%); border-color: rgba(56,214,214,.4); }
 
 /* imagen de franquicia en la tarjeta de mundo */
 .world-card.has-hero { padding-right: 130px; min-height: 130px; }
@@ -244,10 +247,78 @@ p.screen-sub { color: var(--muted); margin-bottom: 18px; font-size: .95rem; }
   transition: transform .1s ease, border-color .1s ease;
   min-height: 54px;
 }
-.opt:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
 .opt.correct { background: rgba(76,217,100,.22); border-color: var(--green); }
 .opt.wrong { background: rgba(255,94,87,.2); border-color: var(--red); animation: shake .35s; }
 .opt:disabled { cursor: default; }
+.opts.two { grid-template-columns: 1fr 1fr; }
+
+/* hover SOLO en dispositivos con mouse: evita que el resaltado se "pegue"
+   en táctiles al pasar a la siguiente pregunta (bug de foco) */
+@media (hover: hover) {
+  .opt:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
+}
+.opt:focus { outline: none; }
+.opt:focus-visible { outline: 2px solid var(--teal); }
+
+/* === elegir imagen === */
+.pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.pick {
+  background: var(--card2); border: 3px solid rgba(255,255,255,.15);
+  border-radius: 14px; padding: 10px; cursor: pointer; min-height: 110px;
+  display: flex; align-items: center; justify-content: center;
+}
+.pick img { max-height: 100px; max-width: 100%; object-fit: contain; }
+@media (hover: hover) { .pick:hover:not(:disabled) { border-color: var(--accent); } }
+.pick.correct { border-color: var(--green); background: rgba(76,217,100,.15); }
+.pick.wrong { border-color: var(--red); animation: shake .35s; }
+.pick:disabled { cursor: default; }
+
+/* === ordenar fichas === */
+.order-built {
+  min-height: 56px; margin-top: 18px; padding: 10px;
+  background: rgba(0,0,0,.25); border-radius: 12px;
+  border: 2px dashed rgba(255,255,255,.2);
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: center;
+}
+.order-bank { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+.token {
+  background: var(--card2); border: 2px solid rgba(255,255,255,.25); color: var(--text);
+  border-radius: 10px; padding: 10px 14px; font-size: 1rem; font-weight: 800; cursor: pointer;
+}
+@media (hover: hover) { .token:hover:not(:disabled):not(.placed) { border-color: var(--accent); transform: translateY(-2px); } }
+.token:disabled { opacity: .25; cursor: default; }
+.token.placed { cursor: default; border-color: var(--teal); }
+.token.good { border-color: var(--green); background: rgba(76,217,100,.18); }
+.token.bad { border-color: var(--red); background: rgba(255,94,87,.15); }
+
+/* === unir parejas === */
+.match-grid { display: flex; gap: 12px; margin-top: 18px; }
+.match-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.mbtn {
+  background: var(--card2); border: 2px solid rgba(255,255,255,.2); color: var(--text);
+  border-radius: 12px; padding: 14px 8px; font-size: .95rem; font-weight: 800; cursor: pointer;
+  min-height: 54px;
+}
+.mbtn.sel { border-color: var(--accent); background: rgba(255,181,46,.15); }
+.mbtn.bad { border-color: var(--red); background: rgba(255,94,87,.2); animation: shake .3s; }
+.mbtn.done { border-color: var(--green); background: rgba(76,217,100,.14); opacity: .55; cursor: default; }
+
+/* === focos binarios === */
+.bits-row { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+.bit {
+  background: var(--card2); border: 2px solid rgba(255,255,255,.2); color: var(--text);
+  border-radius: 14px; padding: 12px 8px; cursor: pointer; width: 70px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.bit .bulb { font-size: 1.8rem; }
+.bit .bval { font-weight: 900; font-size: 1.1rem; color: var(--muted); }
+.bit.on { border-color: var(--accent); background: rgba(255,181,46,.14); box-shadow: 0 0 14px rgba(255,181,46,.35); }
+.bit.on .bval { color: var(--accent); }
+.bits-sum { text-align: center; margin-top: 14px; font-weight: 800; color: var(--teal); }
+
+/* === tarjeta de concepto === */
+.info-card { border-left: 4px solid var(--teal); text-align: center; }
+.info-card .q-text { font-size: 1.1rem; line-height: 1.6; }
 @keyframes shake {
   20% { transform: translateX(-6px); } 40% { transform: translateX(6px); }
   60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
@@ -502,3 +573,52 @@ p.screen-sub { color: var(--muted); margin-bottom: 18px; font-size: .95rem; }
   font-size: .85rem; font-weight: 700; text-decoration: underline; padding: 6px 10px;
 }
 .footer-links button:hover { color: var(--text); }
+
+/* ===== Cupones ===== */
+.coupon-hint { font-size: .8rem; margin: 14px 0 4px; }
+.coupon-shelf { margin-top: 16px; }
+.coupon-chip {
+  font-size: 1.6rem; width: 48px; height: 48px; border-radius: 12px; cursor: pointer;
+  background: rgba(255,181,46,.12); border: 1px solid rgba(255,181,46,.5);
+  display: flex; align-items: center; justify-content: center;
+}
+@media (hover: hover) { .coupon-chip:hover { transform: translateY(-3px); border-color: var(--accent); } }
+
+/* ===== Tarjeta de examen ===== */
+.exam-card { border: 2px solid rgba(255,181,46,.45); background: linear-gradient(135deg, rgba(255,181,46,.08), var(--card)); }
+.exam-card:disabled { opacity: .5; }
+
+/* ===== Panel de Papá ===== */
+.student {
+  background: var(--card); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; margin-bottom: 12px; overflow: hidden;
+}
+.student-head {
+  width: 100%; background: none; border: none; color: var(--text); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 14px 16px; text-align: left;
+}
+.student-head .st-name { font-weight: 900; font-size: 1.05rem; }
+.student-head .st-meta { color: var(--muted); font-size: .8rem; font-weight: 700; text-align: right; }
+.student-summary { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
+.pill {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px; padding: 4px 10px; font-size: .78rem; font-weight: 800;
+}
+.pill.warn { background: rgba(255,94,87,.12); border-color: rgba(255,94,87,.4); color: #ffb3af; }
+.student-detail { max-height: 0; overflow: hidden; transition: max-height .3s ease; padding: 0 16px; }
+.student-detail.open { max-height: 1200px; padding-bottom: 14px; }
+.day-table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-top: 4px; }
+.day-table th, .day-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.07); }
+.day-table th { color: var(--muted); font-size: .72rem; text-transform: uppercase; }
+.day-table td:first-child, .day-table th:first-child { text-align: left; }
+.day-table td.ok { color: var(--green); font-weight: 800; }
+.day-table td.err { color: var(--red); font-weight: 800; }
+.exam-breakdown { margin-top: 10px; }
+.exam-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.exam-tag {
+  font-size: .72rem; font-weight: 700; border-radius: 8px; padding: 4px 8px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+}
+.exam-tag.pass { border-color: rgba(76,217,100,.4); color: #b6f0c2; }
+.exam-tag.fail { border-color: rgba(255,181,46,.35); color: #ffe0a8; }
