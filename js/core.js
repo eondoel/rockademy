@@ -13,6 +13,7 @@ const DEFAULT_STATE = {
   xp: 0,
   streak: { count: 0, last: '' },
   english: {},          // unitId -> { subDone, examBest, examDone, examTries }
+  grammar: {},          // gramática del inglés
   math: {},
   general: {},
   tech: {},
@@ -262,6 +263,7 @@ function examsPassedCount() {
   let n = 0;
   try {
     if (typeof ENGLISH_UNITS !== 'undefined') ENGLISH_UNITS.forEach(u => { if (unitState(S.english, u.id).examDone) n++; });
+    if (typeof GRAMMAR_UNITS !== 'undefined') GRAMMAR_UNITS.forEach(u => { if (unitState(S.grammar, u.id).examDone) n++; });
     if (typeof MATH_TOPICS !== 'undefined') MATH_TOPICS.forEach(t => { if (unitState(S.math, t.id).examDone) n++; });
     if (typeof GENERAL_TOPICS !== 'undefined') GENERAL_TOPICS.forEach(t => { if (unitState(S.general, t.id).examDone) n++; });
     if (typeof ROBOT_LEVELS !== 'undefined' && ROBOT_LEVELS.every((_, i) => S.robot[i])) n++;

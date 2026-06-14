@@ -268,7 +268,7 @@ function prettyDay(k) {
 function countExamsFromData(d) {
   let n = 0;
   const scan = (store) => { if (store) Object.values(store).forEach(v => { if (v && v.examDone) n++; }); };
-  scan(d.english); scan(d.math); scan(d.general); scan(d.tech);
+  scan(d.english); scan(d.grammar); scan(d.math); scan(d.general); scan(d.tech);
   if (d.robot && Object.keys(d.robot).length >= 11) n++;
   if (d.claude && d.claude.quizDone) n++;
   return n;
@@ -285,11 +285,12 @@ function examBreakdownHTML(d) {
       }
     });
   };
-  const enNames = {}, maNames = {}, geNames = {};
+  const enNames = {}, grNames = {}, maNames = {}, geNames = {};
   if (typeof ENGLISH_UNITS !== 'undefined') ENGLISH_UNITS.forEach(u => enNames[u.id] = u.title);
+  if (typeof GRAMMAR_UNITS !== 'undefined') GRAMMAR_UNITS.forEach(u => grNames[u.id] = 'Gram: ' + u.title);
   if (typeof MATH_TOPICS !== 'undefined') MATH_TOPICS.forEach(t => maNames[t.id] = t.title);
   if (typeof GENERAL_TOPICS !== 'undefined') GENERAL_TOPICS.forEach(t => geNames[t.id] = t.title);
-  fmt(d.english, enNames); fmt(d.math, maNames); fmt(d.general, geNames);
+  fmt(d.english, enNames); fmt(d.grammar, grNames); fmt(d.math, maNames); fmt(d.general, geNames);
   fmt(d.tech, { complab: 'Compu-Lab' });
   if (d.claude && (d.claude.quizTries || d.claude.quizDone)) {
     parts.push(`<span class="exam-tag ${d.claude.quizDone ? 'pass' : 'fail'}">Academia Claude: ${d.claude.quizDone ? '✅' : '⏳'} ${d.claude.quizBest || 0}/10 (${d.claude.quizTries || 0} intentos)</span>`);

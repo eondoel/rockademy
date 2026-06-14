@@ -57,6 +57,25 @@ for (const u of ENGLISH_UNITS) {
   }
 }
 
+// ===== GRAMÁTICA =====
+for (const u of GRAMMAR_UNITS) {
+  if (!IMG[u.img]) issues.push('grammar ' + u.id + ': img inexistente ' + u.img);
+  if (!IMG[u.ally]) issues.push('grammar ' + u.id + ': ally inexistente ' + u.ally);
+  for (let s = 0; s < u.subs.length; s++) {
+    for (let r = 0; r < 30; r++) {
+      const qs = buildGrammarLesson(u, s);
+      const scored = qs.filter(q => q.type !== 'info').length;
+      if (scored < 9) issues.push('grammar ' + u.id + ' L' + s + ': solo ' + scored + ' ejercicios');
+      qs.forEach(q => checkQ(q, 'grammar ' + u.id + ' L' + s));
+    }
+  }
+  for (let r = 0; r < 40; r++) {
+    const ex = buildGrammarExam(u);
+    if (ex.length < 12) issues.push('grammar ' + u.id + ' examen: ' + ex.length);
+    ex.forEach(q => checkQ(q, 'grammar ' + u.id + ' examen'));
+  }
+}
+
 // ===== MATEMÁTICAS =====
 for (const t of MATH_TOPICS) {
   if (!IMG[t.img]) issues.push('math ' + t.id + ': img inexistente ' + t.img);
@@ -127,7 +146,7 @@ ROBOT_LEVELS.forEach((lv, i) => {
 
 if (issues.length) { console.log('❌ ' + issues.length + ' PROBLEMAS:\\n' + issues.slice(0, 30).join('\\n')); process.exit(1); }
 const totalQ = ENGLISH_UNITS.length + MATH_TOPICS.length + GENERAL_TOPICS.length;
-console.log('✅ TODO OK · ' + ENGLISH_UNITS.length + ' unidades inglés, ' + MATH_TOPICS.length + ' temas mate, '
+console.log('✅ TODO OK · ' + ENGLISH_UNITS.length + ' unidades inglés + ' + GRAMMAR_UNITS.length + ' de gramática, ' + MATH_TOPICS.length + ' temas mate, '
   + GENERAL_TOPICS.length + ' temas generales (' + bankTotal + ' preguntas de banco), Compu-Lab + Claude, '
   + ROBOT_LEVELS.length + ' niveles robot resolubles');
 `;
