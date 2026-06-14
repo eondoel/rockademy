@@ -7,6 +7,7 @@ const ENGLISH_UNITS = [
   {
     id: 'saludos', title: 'Saludos', emoji: '👋', dinoImg: 'triceratops', img: 'mrdna',
     desc: 'Hello! Tus primeras palabras',
+    frame: { en: 'I say "___" to my friend.', es: 'Le digo "[w]" a mi amigo.' },
     items: [
       { en: 'hello', es: 'hola', e: '👋' },
       { en: 'goodbye', es: 'adiós', e: '🚪' },
@@ -23,6 +24,7 @@ const ENGLISH_UNITS = [
   {
     id: 'numeros', title: 'Números', emoji: '🔢', dinoImg: 'mosasaurus', img: 'vbucks',
     desc: 'One, two, three… ¡a contar V-monedas!',
+    frame: { en: 'I have ___ diamonds.', es: 'Tengo [w] diamantes.' },
     items: [
       { en: 'one', es: 'uno', e: '1️⃣' },
       { en: 'two', es: 'dos', e: '2️⃣' },
@@ -41,6 +43,7 @@ const ENGLISH_UNITS = [
   {
     id: 'colores', title: 'Colores', emoji: '🎨', dinoImg: 'dilophosaurus', img: 'peely',
     desc: 'Pinta tu mundo en inglés',
+    frame: { en: 'My sword is ___.', es: 'Mi espada es [w].' },
     items: [
       { en: 'red', es: 'rojo', e: '🔴' },
       { en: 'blue', es: 'azul', e: '🔵' },
@@ -57,6 +60,7 @@ const ENGLISH_UNITS = [
   {
     id: 'criaturas', title: 'Criaturas', emoji: '🐾', dinoImg: 'spinosaurus', img: 'raptor',
     desc: 'Los mobs y bestias del multiverso',
+    frame: { en: 'Look out! A ___!', es: '¡Cuidado! ¡Un(a) [w]!' },
     items: [
       { en: 'dinosaur', es: 'dinosaurio', e: '🦖' },
       { en: 'dragon', es: 'dragón', e: '🐉' },
@@ -73,6 +77,7 @@ const ENGLISH_UNITS = [
   {
     id: 'familia', title: 'La familia', emoji: '👨‍👩‍👦', dinoImg: 'brachiosaurus', img: 'malcolm',
     desc: 'Como en Malcolm: toda la familia',
+    frame: { en: 'This is my ___.', es: 'Este(a) es mi [w].' },
     items: [
       { en: 'family', es: 'familia', e: '👨‍👩‍👧‍👦' },
       { en: 'mother', es: 'mamá', e: '👩' },
@@ -89,6 +94,7 @@ const ENGLISH_UNITS = [
   {
     id: 'comida', title: 'Comida', emoji: '🍕', dinoImg: 'trex', img: 'mc_cake',
     desc: 'Recarga energía como Goku',
+    frame: { en: 'I want some ___, please.', es: 'Quiero [w], por favor.' },
     items: [
       { en: 'apple', es: 'manzana', e: '🍎' },
       { en: 'bread', es: 'pan', e: '🍞' },
@@ -105,6 +111,7 @@ const ENGLISH_UNITS = [
   {
     id: 'acciones', title: 'Acciones gamer', emoji: '🎮', dinoImg: 'blue', img: 'llama',
     desc: 'Run, jump, build, mine…',
+    frame: { en: 'Watch me ___!', es: '¡Mírame [w]!' },
     items: [
       { en: 'run', es: 'correr', e: '🏃' },
       { en: 'jump', es: 'saltar', e: '🦘' },
@@ -139,6 +146,7 @@ const ENGLISH_UNITS = [
   {
     id: 'adjetivos', title: 'Adjetivos épicos', emoji: '💪', dinoImg: 'stegosaurus', img: 'vegeta',
     desc: 'Describe a tus personajes',
+    frame: { en: 'This dragon is very ___.', es: 'Este dragón es muy [w].' },
     items: [
       { en: 'big', es: 'grande', e: '🐘' },
       { en: 'small', es: 'pequeño', e: '🐜' },
@@ -157,6 +165,7 @@ const ENGLISH_UNITS = [
   {
     id: 'lugares', title: 'Lugares del mapa', emoji: '🗺️', dinoImg: 'ankylosaurus', img: 'battlebus',
     desc: 'Explora el mundo en inglés',
+    frame: { en: "Let's go to the ___!", es: '¡Vamos a [w]!' },
     items: [
       { en: 'house', es: 'casa', e: '🏠' },
       { en: 'school', es: 'escuela', e: '🏫' },
@@ -650,15 +659,33 @@ function exOrderEn(item) {
 function exMatchEn(items) {
   return { type: 'match', text: '🔗 Une cada palabra con su significado', pairs: items.map(it => [it.en, it.es]) };
 }
+/* completar la palabra dentro de una oración (vocabulario en contexto) */
+function exClozeEn(item, pool, frame) {
+  if (!frame) return null;
+  const others = shuffle(pool.filter(x => x.en !== item.en)).slice(0, 3);
+  const enBlank = frame.en.replace('___', '<b style="color:var(--teal)">_____</b>');
+  const esFilled = frame.es.replace('[w]', `<b>${esc(item.es)}</b>`);
+  return {
+    type: 'mc', img: WORD_IMG[item.en] || motivador(),
+    say: frame.en.replace('___', item.en),
+    text: `Completa la oración en inglés:<br>“${enBlank}”<br><span class="muted" style="font-size:.85rem">${esFilled}</span>`,
+    options: shuffle([item.en, ...others.map(o => o.en)]),
+    answer: item.en,
+  };
+}
 
-function englishExercise(item, pool, unitImg) {
-  const makers = [() => exTrad(item, pool), () => exRev(item, pool), () => exListen(item, pool, unitImg)];
+function englishExercise(item, pool, u) {
+  const makers = [() => exTrad(item, pool), () => exRev(item, pool), () => exListen(item, pool, u.img)];
   if (/^[a-z]{3,8}$/.test(item.en)) makers.push(() => exSpellEn(item));
   makers.push(() => exTFEn(item, pool));
   const pi = exPickImgEn(item, pool);
   if (pi) makers.push(() => pi);
   const or = exOrderEn(item);
   if (or) makers.push(() => or);
+  if (u.frame) { // el vocabulario en contexto pesa más (objetivo: subir dificultad)
+    makers.push(() => exClozeEn(item, pool, u.frame));
+    makers.push(() => exClozeEn(item, pool, u.frame));
+  }
   return pick(makers)();
 }
 
@@ -670,14 +697,16 @@ function buildEnglishLesson(u, subIdx) {
   // presentación de palabras nuevas (segmentación: una por pantalla)
   focus.forEach(item => qs.push({
     type: 'info', img: WORD_IMG[item.en], emoji: item.e, say: item.en,
-    text: `Palabra nueva:<br><span style="font-size:1.8rem;color:var(--teal);font-weight:900">${esc(item.en)}</span><br>= <b>${esc(item.es)}</b><br><span class="muted" style="font-size:.85rem">🔊 Escúchala y repítela en voz alta</span>`,
+    text: `Palabra nueva:<br><span style="font-size:1.8rem;color:var(--teal);font-weight:900">${esc(item.en)}</span><br>= <b>${esc(item.es)}</b>`
+      + (u.frame ? `<br><span class="muted" style="font-size:.82rem">Ej: “${esc(u.frame.en.replace('___', item.en))}”</span>` : '')
+      + `<br><span class="muted" style="font-size:.85rem">🔊 Escúchala y repítela en voz alta</span>`,
   }));
   // 9 ejercicios: enfoque en palabras nuevas + 2 de repaso (intercalado)
   const targets = [];
   const cyc = shuffle(focus);
   for (let n = 0; n < (review.length ? 7 : 9); n++) targets.push(cyc[n % cyc.length]);
   if (review.length) { targets.push(pick(review), pick(review)); }
-  const exs = shuffle(targets).map(t => englishExercise(t, u.items, u.img));
+  const exs = shuffle(targets).map(t => englishExercise(t, u.items, u));
   // 1 unir-parejas con las palabras del grupo
   const matchPool = shuffle(focus.concat(review)).slice(0, 4);
   exs.splice(ri(2, exs.length), 0, exMatchEn(matchPool));
@@ -692,7 +721,7 @@ function buildEnglishExam(u) {
   if (multi.length) qs.push(exOrderEn(pick(multi)));
   let n = 0;
   while (qs.length < 12) {
-    qs.push(englishExercise(all[n % all.length], u.items, u.img));
+    qs.push(englishExercise(all[n % all.length], u.items, u));
     n++;
   }
   return shuffle(qs);
