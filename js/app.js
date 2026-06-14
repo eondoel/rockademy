@@ -112,7 +112,7 @@ async function showParentPanel() {
   }
   let rows;
   try {
-    const res = await sb.from('rockademy_progress').select('username,data,updated_at').order('updated_at', { ascending: false });
+    const res = await sb.from('rockademy_progress').select('user_id,username,data,updated_at').order('updated_at', { ascending: false });
     if (res.error) throw res.error;
     rows = res.data || [];
   } catch (e) {
@@ -130,6 +130,85 @@ async function showParentPanel() {
     const d = document.getElementById('det-' + b.dataset.toggle);
     if (d) d.classList.toggle('open');
   }));
+  body.querySelectorAll('[data-setpass]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation(); parentSetPassword(b.dataset.setpass, b.dataset.name);
+  }));
+  body.querySelectorAll('[data-deluser]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation(); parentDeleteUser(b.dataset.deluser, b.dataset.name);
+  }));
+}
+
+/* Llama a la Edge Function "admin" con el token de dodo */
+async function adminCall(body) {
+  if (typeof sb === 'undefined' || !sb) throw new Error('Sin conexión a la nube.');
+  const { data, error } = await sb.functions.invoke('admin', { body });
+  if (error) {
+    let msg = error.message || String(error);
+    try { const j = await error.context.json(); if (j && j.error) msg = j.error; } catch (e) {}
+    if (/not found|404/i.test(msg)) msg = 'Falta desplegar la función "admin" en Supabase (ver supabase/DEPLOY-FUNCION.md).';
+    throw new Error(msg);
+  }
+  if (data && data.ok === false) throw new Error(data.error || 'No se pudo completar.');
+  return data;
+}
+
+function parentSetPassword(uid, name) {
+  if (!uid) { showModal(`<h2>Sin datos</h2><p>Esta cuenta aún no tiene identificador. Pídele que entre una vez más.</p><button class="btn" data-close>OK</button>`); return; }
+  showModal(`
+    <h2>🔑 Nueva contraseña</h2>
+    <p>Para <b>${esc(name)}</b>. Anótala bien — no hay recuperación.</p>
+    <input id="np" type="text" class="login-input" placeholder="Nueva contraseña (mín. 6)" maxlength="40" autocomplete="off">
+    <div class="q-note" id="np-msg" style="color:var(--red)"></div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn secondary" data-close>Cancelar</button>
+      <button class="btn" id="np-ok">Cambiar</button>
+    </div>
+  `, {
+    onMount() {
+      const inp = $('#np'); inp.focus();
+      $('#np-ok').addEventListener('click', async () => {
+        const v = inp.value;
+        if (v.length < 6) { $('#np-msg').style.color = 'var(--red)'; $('#np-msg').textContent = 'Mínimo 6 caracteres'; return; }
+        $('#np-ok').disabled = true;
+        $('#np-msg').style.color = 'var(--muted)'; $('#np-msg').textContent = 'Cambiando…';
+        try {
+          await adminCall({ action: 'setPassword', userId: uid, password: v });
+          closeModal();
+          showModal(`<h2>✅ Listo</h2><p>La contraseña de <b>${esc(name)}</b> quedó como:<br><b style="color:var(--accent)">${esc(v)}</b><br><span class="muted" style="font-size:.85rem">Apúntala.</span></p><button class="btn" data-close>OK</button>`);
+        } catch (e) {
+          $('#np-ok').disabled = false;
+          $('#np-msg').style.color = 'var(--red)'; $('#np-msg').textContent = e.message;
+        }
+      });
+    },
+  });
+}
+
+function parentDeleteUser(uid, name) {
+  if (!uid) { showModal(`<h2>Sin datos</h2><p>Esta cuenta aún no tiene identificador. Pídele que entre una vez más.</p><button class="btn" data-close>OK</button>`); return; }
+  showModal(`
+    <h2>⚠️ ¿Borrar a ${esc(name)}?</h2>
+    <p>Se borra la cuenta y TODO su progreso para siempre. No se puede deshacer.</p>
+    <div class="q-note" id="del-msg" style="color:var(--red)"></div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn secondary" data-close>Cancelar</button>
+      <button class="btn" id="del-ok" style="background:var(--red);color:#fff">Sí, borrar</button>
+    </div>
+  `, {
+    onMount() {
+      $('#del-ok').addEventListener('click', async () => {
+        $('#del-ok').disabled = true; $('#del-ok').textContent = 'Borrando…';
+        try {
+          await adminCall({ action: 'delete', userId: uid });
+          closeModal();
+          showParentPanel();
+        } catch (e) {
+          $('#del-ok').disabled = false; $('#del-ok').textContent = 'Sí, borrar';
+          $('#del-msg').textContent = e.message;
+        }
+      });
+    },
+  });
 }
 
 function parentStudentCard(row) {
@@ -169,6 +248,10 @@ function parentStudentCard(row) {
           </tbody>
         </table>
         <div class="exam-breakdown">${examBreakdownHTML(d)}</div>
+        <div class="admin-row">
+          <button class="btn small secondary" data-setpass="${esc(row.user_id || '')}" data-name="${name}">🔑 Cambiar contraseña</button>
+          <button class="btn small admin-del" data-deluser="${esc(row.user_id || '')}" data-name="${name}">🗑️ Borrar cuenta</button>
+        </div>
       </div>
     </div>`;
 }

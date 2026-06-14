@@ -622,3 +622,5 @@ p.screen-sub { color: var(--muted); margin-bottom: 18px; font-size: .95rem; }
 }
 .exam-tag.pass { border-color: rgba(76,217,100,.4); color: #b6f0c2; }
 .exam-tag.fail { border-color: rgba(255,181,46,.35); color: #ffe0a8; }
+.admin-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
+.btn.admin-del { background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.5); color: #ffb3af; box-shadow: none; }
